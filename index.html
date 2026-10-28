@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>아이폰 16 시뮬레이터</title>
+<style>
+:root{--bg:#e8e6e1;--ink:#2a2a2a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181b;--ink:#d8d8d8}}
+:root[data-theme="dark"]{--bg:#17181b;--ink:#d8d8d8}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+#hint{font-size:13px;margin:6px 0 8px;opacity:.7;text-align:center}
+#wrap{position:relative}
+#device{position:absolute;left:50%;top:0;width:393px;height:852px;margin-left:-196.5px;transform-origin:top center;background:#000;border-radius:62px;border:11px solid #2b2b2e;box-shadow:0 0 0 2px #6b6b70,0 30px 60px rgba(0,0,0,.35);overflow:hidden;box-sizing:content-box}
+#device *{box-sizing:border-box}
+#island{position:absolute;top:11px;left:50%;width:120px;height:35px;margin-left:-60px;background:#000;border-radius:20px;z-index:50}
+#sb{position:absolute;top:0;left:0;right:0;height:54px;display:flex;justify-content:space-between;align-items:center;padding:6px 34px 0;font-size:15px;font-weight:600;z-index:40;color:#fff;pointer-events:none}
+#sb.dark{color:#000}
+#scr{position:absolute;inset:0;background:#fff;overflow:hidden}
+.v{position:absolute;inset:0;display:none;flex-direction:column}
+.v.on{display:flex}
+#hb{position:absolute;bottom:7px;left:50%;width:140px;height:5px;margin-left:-70px;border-radius:3px;background:#fff;z-index:60;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.15)}
+#hb.dark{background:#111;box-shadow:none}
+#hbz{position:absolute;bottom:0;left:0;right:0;height:26px;z-index:61;cursor:pointer}
+/* home */
+#home{background:linear-gradient(160deg,#3b5a8c 0%,#c9768f 55%,#f2b36d 100%);padding:70px 22px 0;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 0}
+.app{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;cursor:pointer;background:none;border:0;color:#fff;font-family:inherit}
+.ic{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:30px}
+.app:active .ic{transform:scale(.92)}
+#dock{position:absolute;left:12px;right:12px;bottom:22px;height:92px;border-radius:34px;background:rgba(255,255,255,.28);backdrop-filter:blur(18px);display:flex;justify-content:space-around;align-items:center}
+#dock .app span{display:none}
+#toast{position:absolute;left:50%;bottom:130px;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;font-size:13px;padding:8px 14px;border-radius:16px;opacity:0;transition:opacity .25s;z-index:70;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1}
+/* list */
+.hd{padding:58px 18px 10px;font-size:30px;font-weight:700;color:#111}
+.th{display:flex;gap:12px;align-items:center;padding:11px 18px;cursor:pointer;border-bottom:1px solid #eee;color:#111}
+.th:active{background:#f1f1f1}
+.av{width:46px;height:46px;border-radius:50%;background:#c7c9d1;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;flex:none}
+.th b{display:block;font-size:16px}.th small{color:#888;font-size:14px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:270px}
+/* chat */
+#chat{background:#fff}
+#chat.kakao{background:#b2c7da}
+.ch{padding:56px 12px 10px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #ddd;background:rgba(246,246,246,.95);color:#111;font-weight:600;font-size:17px}
+#chat.kakao .ch{background:#b2c7da;border-bottom:0}
+.back{background:none;border:0;font-size:30px;line-height:1;color:#0b84fe;cursor:pointer;padding:0 6px}
+#chat.kakao .back{color:#333}
+#body{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px}
+.row{display:flex}.row.me{justify-content:flex-end}
+.b{max-width:75%;padding:8px 13px;border-radius:19px;font-size:16px;line-height:1.35;word-break:break-word;white-space:pre-wrap}
+.them .b{background:#e9e9eb;color:#111}.me .b{background:#0b84fe;color:#fff}
+#chat.kakao .them .b{background:#fff;border-radius:4px 16px 16px 16px}
+#chat.kakao .me .b{background:#fee500;color:#111;border-radius:16px 4px 16px 16px}
+.typing .b{color:#888;letter-spacing:2px}
+.inp{display:flex;gap:8px;padding:8px 12px 30px;background:#f6f6f6}
+#chat.kakao .inp{background:#fff}
+.inp input{flex:1;font-size:16px;padding:9px 14px;border:1px solid #ccc;border-radius:20px;outline:none;font-family:inherit;min-width:0}
+.inp button{border:0;border-radius:50%;width:36px;height:36px;background:#0b84fe;color:#fff;font-size:18px;cursor:pointer;flex:none}
+#chat.kakao .inp button{background:#fee500;color:#111}
+/* dialer */
+#dialer{background:#fff;color:#111}
+.tabs{display:flex;padding:60px 18px 0;gap:8px}
+.tabs button{flex:1;padding:8px;border:0;border-radius:10px;background:#eee;font-size:15px;font-family:inherit;cursor:pointer}
+.tabs button.on{background:#0b84fe;color:#fff}
+#disp{height:54px;font-size:32px;text-align:center;margin-top:30px;letter-spacing:1px}
+#keys{display:grid;grid-template-columns:repeat(3,76px);gap:14px 20px;justify-content:center;margin-top:10px}
+#keys button{width:76px;height:76px;border-radius:50%;border:0;background:#e9e9eb;font-size:30px;font-family:inherit;cursor:pointer}
+#keys button:active{background:#ccc}
+.act{display:flex;justify-content:center;align-items:center;gap:40px;margin-top:18px}
+#callbtn{width:76px;height:76px;border-radius:50%;border:0;background:#34c759;font-size:32px;cursor:pointer}
+#del{border:0;background:none;font-size:26px;width:60px;cursor:pointer}
+#contacts{padding-top:6px}
+/* call */
+#call{background:linear-gradient(#2c3550,#12141c);color:#fff;align-items:center;padding-top:90px}
+#cname{font-size:34px;font-weight:600}
+#cstat{font-size:17px;opacity:.7;margin-top:6px}
+#cav{width:92px;height:92px;border-radius:50%;background:#5c6788;display:flex;align-items:center;justify-content:center;font-size:44px;margin-top:26px}
+#cap{margin-top:34px;width:100%;padding:0 22px;display:flex;flex-direction:column;gap:10px;min-height:190px}
+#cap div{background:rgba(255,255,255,.14);padding:11px 15px;border-radius:16px;font-size:17px;line-height:1.4;animation:in .35s}
+#cap div small{display:block;opacity:.6;font-size:12px;margin-bottom:2px}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#cap div{animation:none}}
+#hang{position:absolute;bottom:70px;left:50%;margin-left:-37px;width:74px;height:74px;border-radius:50%;border:0;background:#ff3b30;font-size:30px;cursor:pointer}
+#hint button{font:inherit;font-size:12px;border:1px solid currentColor;border-radius:12px;background:none;color:inherit;padding:2px 9px;margin-right:8px;cursor:pointer}
+#lockscr{background:#000;color:#eee;align-items:center;cursor:pointer}
+#lkI{margin-top:62px}
+#lkD{font-size:21px;font-weight:600;margin-top:16px}
+#lkT{font-size:104px;font-weight:700;line-height:1;margin-top:4px;letter-spacing:-1px}
+.lb{position:absolute;bottom:52px;width:58px;height:58px;border-radius:50%;background:#0d0d0d;border:1px solid #2a2a2a;display:flex;align-items:center;justify-content:center}
+.lb.l{left:47px}.lb.r{right:47px}
+#pass{background:#000;color:#fff;align-items:center}
+#ptitle{margin-top:150px;font-size:20px}
+#pdots{display:flex;gap:24px;margin-top:26px}
+#pdots i{width:13px;height:13px;border-radius:50%;border:2px solid #fff}
+#pdots i.f{background:#fff}
+#pdots.sh{animation:sh .4s}
+@keyframes sh{20%,60%{transform:translateX(-12px)}40%,80%{transform:translateX(12px)}}
+@media (prefers-reduced-motion:reduce){#pdots.sh{animation:none}}
+#pkeys{display:grid;grid-template-columns:repeat(3,77px);gap:19px 25px;margin-top:80px}
+#pkeys button{width:77px;height:77px;border-radius:50%;border:1px solid #1d1d1d;background:#0e0e0e;color:#fff;font-family:inherit;font-size:38px;font-weight:300;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;padding:0}
+#pkeys button small{font-size:10px;font-weight:700;letter-spacing:3px;height:12px;margin-top:3px}
+#pkeys button:active{background:#333}
+.pf{position:absolute;bottom:52px;width:281px;left:56px;display:flex;justify-content:space-between}
+.pf button{width:77px;background:none;border:0;color:#fff;font-family:inherit;font-size:17px;cursor:pointer;padding:0}
+#chat.kakao{background:#0b0b0c}
+#chat.kakao .ch{background:#0b0b0c;color:#fff}
+#chat.kakao .back{color:#fff}
+#chat.kakao .them .b{background:#2c2c2e;color:#fff}
+#chat.kakao .inp{background:#1c1c1e}
+#chat.kakao .inp input{background:#2c2c2e;color:#fff;border-color:#3a3a3c}
+#ksplash{background:#f7e34d;align-items:center;justify-content:center}
+#kk{background:#0a0a0a;color:#fff}
+#kkp{flex:1;overflow-y:auto;padding:0 18px 12px;scrollbar-width:none}
+#kkp::-webkit-scrollbar{display:none}
+.kh{display:flex;justify-content:space-between;align-items:center;padding-top:56px;height:96px;margin-bottom:14px}
+.kh b{font-size:28px}
+.kh>span{font-size:22px;letter-spacing:12px;margin-right:-12px}
+.me{display:flex;align-items:center;gap:10px}
+.pl{display:flex;gap:7px;margin-bottom:14px}
+.pl em{font-style:normal;background:#242426;border-radius:18px;padding:8px 14px;font-size:14px;color:#ccc;display:flex;gap:6px;align-items:center;white-space:nowrap}
+.pl em.on{background:#fff;color:#000;font-weight:600}
+.bd{background:#ff5a1f;color:#fff;border-radius:11px;min-width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-style:normal;padding:0 6px}
+.ad{position:relative;background:#f2f2f2;color:#111;border-radius:16px;padding:16px 18px;margin-bottom:12px;display:flex;flex-direction:column;gap:5px}
+.ad b{font-size:15px}.ad small{color:#666;font-size:12px}
+.ad u{position:absolute;right:10px;top:8px;font-size:10px;border:1px solid #999;border-radius:9px;padding:0 6px;color:#666;text-decoration:none}
+.kr{display:flex;gap:14px;align-items:center;padding:8px 0;cursor:pointer}
+.kr:active{background:#161616}
+.kav{width:48px;height:48px;border-radius:17px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex:none;font-weight:700;overflow:hidden}
+.kav.g{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:none}
+.kav.g i{border-radius:9px}
+.km{flex:1;min-width:0}
+.km b{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.km b s{text-decoration:none;color:#8e8e93;font-weight:400}
+.km small{display:block;color:#8e8e93;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.kt{display:flex;flex-direction:column;align-items:flex-end;gap:6px;color:#8e8e93;font-size:12px;min-width:44px}
+#kkp h4{font-size:15px;margin:18px 0 8px;font-weight:600}
+.up{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}
+.up div{width:72px;flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
+.up .kav{width:56px;height:56px;border-radius:20px}
+.up small{font-size:11px;width:72px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#kkn{display:flex;justify-content:space-around;padding:10px 0 34px;background:#0a0a0a;border-top:1px solid #1a1a1a}
+#kkn button{position:relative;background:none;border:0;font-size:26px;cursor:pointer;color:#fff}
+#kkn button span{display:block;filter:grayscale(1) brightness(.7)}
+#kkn button.on span{filter:grayscale(1) brightness(2.5)}
+#kkn .bd{position:absolute;top:-6px;right:-10px}
+.gift{margin-left:auto;background:#242426;border-radius:18px;padding:9px 16px;font-size:14px;color:#fff;border:0;font-family:inherit}
+#chat.kakao{background:#abc0d0}
+#chat.kakao .ch{background:transparent;color:#111;border-bottom:0}
+#chat.kakao .back{color:#111}
+#chat.kakao #cn{flex:1;text-align:center;padding-left:56px}
+#ci{display:none}
+#chat.kakao #ci{display:block;letter-spacing:10px;font-size:20px;font-weight:400}
+#chat.kakao #body{gap:3px;padding:6px 14px 10px}
+#chat.kakao .row{align-items:flex-start}
+#chat.kakao .row.f{margin-top:12px}
+#chat.kakao .row .b{border-radius:18px;max-width:100%;padding:9px 14px}
+#chat.kakao .row.me .b{background:#fee500;color:#111}
+#chat.kakao .row.them .b{background:#fff;color:#111}
+#chat.kakao .row.me.f .b{border-top-right-radius:4px}
+#chat.kakao .row.them.f .b{border-top-left-radius:4px}
+#chat.kakao .typing{padding-left:44px}
+.pa{width:44px;flex:none}
+.pa .kav{width:34px;height:34px;border-radius:13px;background:#7ccbe3;font-size:16px}
+.col{display:flex;flex-direction:column;max-width:75%;gap:3px}
+.nm{font-size:12px;color:#333;margin:0 0 2px 2px}
+.bw{display:flex;align-items:flex-end;gap:6px;max-width:100%}
+.row.me .bw{max-width:80%}
+.tm{font-size:11px;color:#556;flex:none}
+.dt{align-self:center;background:rgba(80,100,120,.28);color:#fff;font-size:12px;padding:6px 14px;border-radius:14px;margin:6px 0 4px}
+.plus,.sm{display:none}
+#chat.kakao .inp{margin:0 14px 30px;padding:6px 8px;border-radius:28px;background:#f0f2f6;align-items:center;gap:8px}
+#chat.kakao .plus{display:flex;width:40px;height:40px;border-radius:50%;background:#fff;align-items:center;justify-content:center;font-size:26px;color:#111;flex:none}
+#chat.kakao .sm{display:flex;width:34px;height:34px;border-radius:50%;background:#dcdde2;align-items:center;justify-content:center;font-size:20px;color:#444;flex:none}
+#chat.kakao .inp input{border:0;background:transparent;color:#111;padding:6px 4px;border-radius:0}
+#chat.kakao .inp button{width:40px;height:40px;background:#fee500;color:#111}
+.kh{position:sticky;top:0;z-index:5;background:#0a0a0a;margin:0 -18px 8px;padding:56px 18px 0;height:96px}
+#dialer{background:#000;color:#fff}
+#dpane{flex:1;overflow-y:auto;padding:0 18px;scrollbar-width:none}
+#disp{height:56px;font-size:34px;text-align:center;margin-top:118px}
+#keys{display:grid;grid-template-columns:repeat(3,78px);gap:19px 25px;justify-content:center;margin-top:70px}
+#keys button{width:78px;height:78px;border-radius:50%;border:1px solid #232323;background:#151515;color:#fff;font-family:inherit;font-size:36px;font-weight:300;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;padding:0;cursor:pointer}
+#keys button small{font-size:10px;font-weight:700;letter-spacing:3px;height:12px;margin-top:2px}
+#keys button:active{background:#333}
+.act{display:flex;justify-content:center;margin-top:19px;position:relative}
+#callbtn{width:78px;height:78px;border-radius:50%;border:1px solid #6cc070;background:#3f8c45;font-size:32px;cursor:pointer;color:#fff}
+#del{position:absolute;right:30px;top:24px;border:0;background:none;color:#fff;font-size:26px;cursor:pointer}
+#dtabs{display:flex;margin:0 21px 23px;height:62px;border-radius:32px;background:#151517;border:1px solid #232326;padding:4px;gap:2px}
+#dtabs button{flex:1;border:0;border-radius:28px;background:none;color:#fff;font-family:inherit;font-size:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer}
+#dtabs button b{font-size:20px;font-weight:400;line-height:1}
+#dtabs button.on{background:#333336;color:#4a9df8}
+.dh{font-size:30px;font-weight:700;margin:100px 0 8px}
+.dr{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #1d1d1f;cursor:pointer}
+.dr b{display:block;font-size:17px;font-weight:500}.dr small{color:#8e8e93;font-size:13px}.dr em{font-style:normal;color:#8e8e93;font-size:14px}
+.dr.ms b{color:#ff453a}
+#list{background:#000;color:#fff}
+.mh{display:flex;justify-content:space-between;padding:56px 16px 0}
+.pill{background:#1c1c1e;border:1px solid #2a2a2c;color:#fff;border-radius:22px;height:44px;padding:0 18px;font-size:16px;font-family:inherit;cursor:pointer}
+.mt{font-size:40px;font-weight:700;padding:14px 18px 6px}
+#tl{flex:1;overflow-y:auto;scrollbar-width:none}
+.mr{display:flex;align-items:center;gap:10px;padding:10px 14px 0 8px;cursor:pointer}
+.mr:active{background:#111}
+.dot{width:11px;height:11px;border-radius:50%;flex:none}.dot.on{background:#0a84ff}
+.mav{width:46px;height:46px;border-radius:50%;background:linear-gradient(#4b4b6e,#2c2c46);color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;flex:none;margin-bottom:10px}
+.mx{flex:1;min-width:0;border-bottom:1px solid #1c1c1e;padding-bottom:10px}
+.r1{display:flex;justify-content:space-between}.r1 b{font-size:16px}.r1 span{color:#8e8e93;font-size:13px}
+.r2{color:#8e8e93;font-size:14px;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mb{display:flex;gap:10px;padding:8px 14px 28px}
+.sr{flex:1;background:#1c1c1e;border-radius:26px;height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;color:#8e8e93;font-size:17px}
+#ca{display:none;font-style:normal}
+#chat.ims{background:#000}
+#chat.ims .ch{background:transparent;border:0;color:#fff;height:118px;align-items:flex-start;padding:56px 14px 0;position:relative}
+#chat.ims .back{background:#1c1c1e;border:1px solid #2a2a2c;border-radius:22px;height:44px;padding:0 16px;font-size:24px;color:#fff;display:flex;align-items:center}
+#chat.ims .ct{background:#fff;color:#000;border-radius:12px;padding:1px 8px;font-size:15px;font-weight:600;margin-left:8px}
+#chat.ims #ca{display:flex;position:absolute;left:50%;top:50px;width:56px;height:56px;margin-left:-28px;border-radius:50%;background:linear-gradient(#4b4b6e,#2c2c46);color:#fff;font-size:24px;align-items:center;justify-content:center}
+#chat.ims #cn{position:absolute;left:50%;top:96px;transform:translateX(-50%);background:#1c1c1e;border:1px solid #2a2a2c;border-radius:20px;padding:4px 14px;font-size:15px;white-space:nowrap}
+#chat.ims #ci{display:flex;margin-left:auto;background:#1c1c1e;border:1px solid #2a2a2c;border-radius:22px;height:44px;width:60px;align-items:center;justify-content:center;font-size:20px;letter-spacing:0}
+#chat.ims #body{padding:20px 14px 10px;gap:6px}
+#chat.ims .row .b{border-radius:20px;padding:8px 14px;font-size:17px}
+#chat.ims .row.me .b{background:#3b99fc;color:#fff}
+#chat.ims .row.them .b{background:#262629;color:#fff}
+#chat.ims .dt{background:none;color:#8e8e93;font-size:13px;margin:10px 0 2px}
+#chat.ims .inp{background:transparent;padding:6px 14px 30px;gap:8px;align-items:center}
+#chat.ims .plus{display:flex;width:42px;height:42px;border-radius:50%;background:#1c1c1e;color:#fff;align-items:center;justify-content:center;font-size:26px;flex:none}
+#chat.ims .inp input{background:#1c1c1e;color:#fff;border:0;border-radius:22px;padding:11px 16px}
+#chat.ims .inp button{background:#3b99fc;color:#fff}
+#inc{position:absolute;inset:0;z-index:65;display:none;flex-direction:column;justify-content:space-between;align-items:center;background:linear-gradient(#59607a,#1a1c25);color:#fff;padding:120px 0 90px}
+#inc.on{display:flex}
+.in1{text-align:center}.in1 b{display:block;font-size:40px;font-weight:500}.in1 small{font-size:18px;opacity:.7}
+.in2{display:flex;gap:110px}.in2 div{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:14px}
+.in2 button{width:76px;height:76px;border-radius:50%;border:0;font-size:30px;color:#fff;cursor:pointer}
+#inr{background:#ff3b30}#ina{background:#34c759;animation:rg 1s infinite}
+@keyframes rg{50%{transform:scale(1.08)}}
+@media (prefers-reduced-motion:reduce){#ina{animation:none}}
+#bn{position:absolute;top:56px;left:10px;right:10px;z-index:80;background:rgba(44,44,48,.97);color:#fff;border-radius:22px;padding:12px 14px;display:flex;gap:10px;align-items:center;transform:translateY(-160%);transition:transform .4s}
+#bn.on{transform:none}
+.bi{width:38px;height:38px;border-radius:10px;background:#fee500;color:#381e1f;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+#bn b{display:block;font-size:15px}#bn span{font-size:14px;color:#ddd}#bn small{margin-left:auto;color:#999;font-size:12px}
+#off{position:absolute;inset:0;background:#000;z-index:100;opacity:0;pointer-events:none;transition:opacity .35s}
+#off.on{opacity:1;pointer-events:auto}
+#call{background:#242424;padding:100px 0 0;align-items:center;justify-content:flex-start}
+#call #cstat{font-size:34px;font-weight:500;color:#8e8e93;opacity:1;margin:0 0 4px}
+#call #cname{font-size:36px;font-weight:700;color:#fff}
+#call #cap{position:absolute;left:0;right:0;top:230px;margin:0;padding:0 26px;min-height:0;align-items:center}
+#call #cap div{background:none;font-size:26px;text-align:center;line-height:1.45;padding:0;border-radius:0}
+.cg{position:absolute;left:14px;right:14px;top:572px;display:grid;grid-template-columns:repeat(3,1fr);justify-items:center;row-gap:20px}
+.cg>div{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:15px;color:#fff;width:100px}
+.cg button{width:78px;height:78px;border-radius:50%;border:1px solid #777;background:#535353;color:#fff;font-size:30px;cursor:pointer}
+#call .cg #hang{position:static;margin:0;width:78px;height:78px;background:#c82b20;border-color:#e57a70;transform:rotate(135deg)}
+#inc{background:#242424;padding:0;display:none}
+#inc.on{display:block}
+.in1{position:absolute;top:92px;left:0;right:0;text-align:center}
+.in1 small{display:block;font-size:20px;color:#8e8e93;opacity:1}
+.in1 b{font-size:36px;font-weight:700}
+.ic2{position:absolute;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:15px;width:140px;color:#fff}
+.ic2.l{left:9px}.ic2.r{left:244px}
+.sm2{width:44px;height:44px;border-radius:50%;background:#555;border:1px solid #777;color:#fff;font-size:18px;cursor:pointer}
+#inr,#ina{width:78px;height:78px;border-radius:50%;border:1px solid;color:#fff;font-size:30px;animation:none;cursor:pointer}
+#inr{background:#b02a22;border-color:#d96a62;transform:rotate(135deg)}
+#ina{background:#3f8c45;border-color:#6cc070}
+#bn{transform:translateY(-300px);visibility:hidden;opacity:0;transition:transform .4s,opacity .3s,visibility .4s}
+#bn.on{transform:none;visibility:visible;opacity:1}
+#home{background:radial-gradient(ellipse 85% 60% at 50% 55%,#0b0813 0%,#1c1030 45%,#6b4bc0 78%,#b8a0f4 100%);padding:70px 22px 0}
+.wd{position:absolute;top:64px;left:16px;right:16px;height:158px;border-radius:26px;background:linear-gradient(#1b2133,#2d3a5c);padding:14px 18px;color:#fff}
+.w1{display:flex;justify-content:space-between;font-size:15px}
+.w2{font-size:50px;font-weight:300;line-height:1}
+.wd small{position:absolute;right:18px;top:52px;font-size:12px;font-weight:600}
+.w3{display:flex;justify-content:space-between;margin-top:14px}
+.w3 div{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px}
+.w3 i{font-style:normal}
+.wl{position:absolute;top:228px;left:0;right:0;text-align:center;font-size:12px;color:#fff}
+.srch{position:absolute;bottom:128px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.2);padding:5px 14px;border-radius:14px;font-size:12px;color:#fff}
+#home .grid{margin-top:208px;gap:18px 0}
+.ic{position:relative}
+.bg{position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;border-radius:11px;background:#ff3b30;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0 6px;font-style:normal}
+#dead{position:absolute;inset:0;background:#000;z-index:90;display:none}
+#dead.on{display:block}
+#dbat{position:absolute;left:0;right:0;top:330px;display:flex;flex-direction:column;align-items:center;gap:10px;color:#ff453a;font-size:20px;transition:opacity .8s}
+#dbat.off{opacity:0}
+#dn{position:absolute;left:10px;right:10px;top:70px;display:flex;flex-direction:column;gap:8px}
+.nt{display:flex;gap:10px;align-items:center;background:rgba(58,58,62,.92);border-radius:22px;padding:11px 14px;color:#fff;animation:ntin .35s}
+.nt .nx{flex:1;min-width:0}.nt b{display:block;font-size:15px}.nt span{display:block;font-size:14px;color:#ddd;word-break:break-all}.nt small{color:#999;font-size:12px;align-self:flex-start}
+@keyframes ntin{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+#gl{position:absolute;inset:0;z-index:92;display:none;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.14) 0 2px,transparent 2px 4px)}
+#gl.on{display:block;animation:gl .15s steps(2) infinite}
+@keyframes gl{0%{transform:translate(0,0);opacity:.9}25%{transform:translate(-6px,2px);opacity:.4}50%{transform:translate(5px,-3px);opacity:1}75%{transform:translate(-3px,-2px);opacity:.5}100%{transform:translate(0,0);opacity:.8}}
+#dead.glitch #dn{animation:jit .12s steps(2) infinite}
+@keyframes jit{0%{transform:translateX(0)}50%{transform:translateX(8px);filter:hue-rotate(90deg) contrast(2)}100%{transform:translateX(-6px)}}
+@media (prefers-reduced-motion:reduce){#gl.on,#dead.glitch #dn,.nt{animation:none}}
+#bn{z-index:99}
+#news{position:absolute;inset:0;z-index:95;display:none;background:#fff;color:#111;overflow-y:auto;scrollbar-width:none}
+#news.on{display:block}
+.nw1{position:sticky;top:0;z-index:2;background:#fff;padding:52px 16px 10px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #e5e5e5}
+.nw1 b{font-size:20px;letter-spacing:1px;color:#c1121f}.nw1 span{font-size:12px;color:#666}.nw1 i{margin-left:auto;font-style:normal;font-size:20px}
+.nw2{display:flex;gap:14px;padding:10px 16px;font-size:14px;color:#444;overflow-x:auto;white-space:nowrap;border-bottom:1px solid #eee}
+.nw3{padding:14px 18px 60px}
+.nw3 .cat{color:#c1121f;font-weight:600;font-size:13px}
+.nw3 h1{font-size:25px;line-height:1.35;margin:8px 0}
+.nw3 h2{font-size:16px;font-weight:500;color:#555;line-height:1.5;margin:0 0 12px}
+.mt2{font-size:12px;color:#888;line-height:1.6;border-top:1px solid #eee;padding-top:10px}
+.sh{font-size:12px;color:#666;margin:10px 0}
+.nw3 p{font-size:17px;line-height:1.85;margin:16px 0;color:#222}
+.nw3 h3{font-size:19px;margin:26px 0 4px;border-left:4px solid #c1121f;padding-left:10px}
+.nw3 p.cp{font-size:12px;color:#888;margin:6px 0 16px;line-height:1.5}
+.rel{background:#f6f6f6;border-radius:12px;padding:14px;margin-top:22px}
+.rel b{display:block;margin-bottom:6px}.rel div{font-size:15px;padding:7px 0;border-top:1px solid #e5e5e5}
+.cm{border-top:1px solid #eee;padding:12px 0;font-size:15px;line-height:1.6}.cm small{color:#888;display:block}
+#gl{background:#000}
+#gl.on{display:block;animation:flk .2s steps(1) infinite}
+@keyframes flk{0%{background:#000;opacity:.05}20%{background:#fff;opacity:.9}40%{background:#777;opacity:.75}60%{background:#000;opacity:.95}80%{background:#c8c8c8;opacity:.6}100%{background:#000;opacity:.05}}
+@keyframes jit{0%{transform:translateX(0);filter:grayscale(1)}50%{transform:translateX(8px);filter:grayscale(1) contrast(2.5)}100%{transform:translateX(-6px);filter:grayscale(1) invert(1)}}
+@media (prefers-reduced-motion:reduce){#gl.on{animation:none;opacity:.5}}
+.nt.tap{animation:tap .6s forwards}
+@keyframes tap{0%{transform:scale(1)}40%{transform:scale(.95);background:#fff}100%{transform:scale(1);background:#fff}}
+.nt.tap b,.nt.tap span,.nt.tap small{color:#000}
+.br{position:sticky;top:0;z-index:3;background:#f5f5f5;padding:50px 12px 8px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ddd}
+.br u{flex:1;text-decoration:none;background:#e9e9ec;border-radius:10px;padding:6px 10px;font-size:12px;color:#333;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.br span{font-size:18px;color:#555}
+.nw1{position:static;padding-top:12px}
+#qr{display:flex;flex-wrap:wrap;gap:6px;padding:6px 14px 0;justify-content:flex-end}
+#qr:empty{display:none}
+.qc{border:1px solid #cfd6df;background:#fff;color:#222;border-radius:18px;padding:8px 13px;font-size:14px;font-family:inherit;cursor:pointer;max-width:100%;text-align:left}
+.qc:active{transform:scale(.97)}
+#chat.ims .qc{background:#1c1c1e;border-color:#3a3a3c;color:#fff}
+.sysm{align-self:center;font-size:12px;color:#556;margin:8px 0;text-align:center;padding:0 22px}
+</style>
+</head>
+<body>
+<div id="hint"><button id='pwr'>⏻ 전원</button><button id="lockbtn">🔒 화면 잠그기</button>문자·카카오톡에 “안녕”을 보내거나, 전화에서 연락처를 눌러 보세요</div>
+<div id="wrap">
+<div id="device">
+  <div id="island"></div>
+  <div id="sb"><span id="clock">9:41</span><span>5G ▮▮▮</span></div>
+  <div id="scr">
+    <div id="lockscr" class="v on">
+      <svg id="lkI" width="18" height="24" viewBox="0 0 18 24"><rect y="10" width="18" height="14" rx="3" fill="#fff"/><path d="M4 11V7a5 5 0 0110 0v4" fill="none" stroke="#fff" stroke-width="2.5"/></svg>
+      <div id="lkD"></div><div id="lkT"></div>
+      <div class="lb l"><svg width="22" height="30" viewBox="0 0 22 30" fill="#fff"><path d="M4 0h14l-2 7H6z"/><rect x="6" y="9" width="10" height="21" rx="4"/><rect x="9.5" y="14" width="3" height="6" rx="1.5" fill="#000"/></svg></div>
+      <div class="lb r"><svg width="30" height="25" viewBox="0 0 34 28"><path fill="#fff" d="M3 6h6l2-4h12l2 4h6a3 3 0 013 3v16a3 3 0 01-3 3H3a3 3 0 01-3-3V9a3 3 0 013-3z"/><circle cx="17" cy="17" r="7" fill="#000"/><circle cx="17" cy="17" r="4.5" fill="#fff"/></svg></div>
+    </div>
+    <div id="pass" class="v">
+      <div id="ptitle">암호 입력</div><div id="pdots"></div><div id="pkeys"></div>
+      <div class="pf"><button id="emg">긴급 상황</button><button id="pcancel">취소</button></div>
+    </div>
+    <div id="ksplash" class="v"><svg width="96" height="88" viewBox="0 0 96 88"><ellipse cx="48" cy="37" rx="48" ry="37" fill="#381e1f"/><path d="M22 62L15 85Q14 87 17 85L42 69Z" fill="#381e1f"/><text x="48" y="48" text-anchor="middle" font-size="30" font-weight="900" fill="#f7e34d" font-family="Arial Rounded MT Bold,Arial,sans-serif">TALK</text></svg></div>
+    <div id="kk" class="v"><div id="kkp"></div><div id="kkn"><button data-t="friends"><span>👤</span></button><button data-t="chats" class="on"><span>💬</span><i class="bd">10</i></button><button data-t="tv"><span>▶️</span></button><button data-t="shop"><span>🛍️</span></button><button data-t="more"><span>⋯</span></button></div></div>
+    <div id="home" class="v">
+      <div class="grid" id="grid"></div>
+      <div id="dock"></div>
+    </div>
+    <div id="list" class="v" style="background:#fff"><div class="hd" id="lt"></div><div id="tl"></div></div>
+    <div id="chat" class="v">
+      <div class="ch"><button class="back" id="cb">‹</button><i id='ca'></i><span id="cn"></span><span id="ci">⌕✆☰</span></div>
+      <div id="body"></div>
+      <div class="inp"><span class="plus">+</span><input id="in" placeholder="메시지 입력" autocomplete="off"><span class="sm">☺</span><button id="send">↑</button></div>
+    </div>
+    <div id="dialer" class="v">
+      <div class="tabs"><button id="t1" class="on">키패드</button><button id="t2">연락처</button></div>
+      <div id="kp"><div id="disp"></div><div id="keys"></div><div class="act"><span style="width:60px"></span><button id="callbtn">📞</button><button id="del">⌫</button></div></div>
+      <div id="contacts" style="display:none"></div>
+    </div>
+    <div id="call" class="v">
+      <div id="cname"></div><div id="cstat"></div><div id="cav"></div><div id="cap"></div>
+      <button id="hang">📵</button>
+    </div>
+    <div id='inc'><div class='in1'><b>양정원</b><small>휴대전화</small></div><div class='in2'><div><button id='inr'>✕</button>거절</div><div><button id='ina'>✆</button>수락</div></div></div><div id='bn'><div class='bi'>TALK</div><div><b>한동민</b><span>양정원 만나지마.</span></div><small>지금</small></div><div id="toast"></div>
+  </div>
+  <div id="hb"></div><div id="hbz"></div><div id='off'></div>
+</div>
+</div>
+<script>
+/* ===== 여기를 고치면 내용이 바뀝니다 ===== */
+const CFG={
+  pass:"123456",
+  msg:{title:"메시지",icon:"💬",bg:"#34c759",threads:[
+    {n:"민지",first:"오늘 뭐해?",fb:"ㅋㅋㅋ 그렇구나",rules:[
+      [["안녕","하이","hi"],"안녕! 잘 지냈어? 😊"],
+      [["밥","점심","저녁"],"나 지금 배고픈데 같이 먹을래? 🍜"],
+      [["사랑","좋아해"],"갑자기 왜 그래ㅋㅋ 나도 😳"]]},
+    {n:"지훈",first:"내일 과제 다 했어?",fb:"일단 알겠어. 이따 얘기하자",rules:[
+      [["과제","숙제"],"나 아직 시작도 못 했어… 도와줘 😭"],
+      [["안녕","하이"],"어 왔냐"]]}]},
+  kakao:{title:"카카오톡",icon:"TALK",bg:"#fee500",me:"이윤아",
+    ad:["틴트 2개만 사도 이거 다 드려요♥","[올영픽] 립라이너+파우치+스티커 증정"],
+    ad2:["비상시 국민행동요령","비상시 국민행동요령 알아보기"],
+    rooms:[
+      {n:"카카오계정",p:"카카오계정 로그인 알림",t:"15:17",c:"#fee500",i:"👤"},
+      {n:"수능 모임",cnt:6,p:"톡게시판 '공지': 카페 정하기",t:"13:14",b:2,g:1,fb:"ㅇㅇ 확인!",rules:[[["카페"],"성수 어때? 다들 거기 가고 싶다던데"],[["안녕"],"ㅎㅇ"]]},
+      {n:"프로야구봇",p:"🔔오늘 경기가 취소(우천)되었습니다.",t:"12:40",b:3,c:"#1a3a8c",i:"⚾"},
+      {n:"1.서민주, 1.이시온, 1.유서진",cnt:4,p:"10시40분까지 와서 같이 명찰 정리해요 ㅠ.ㅠ 한달남음이",t:"11:03",g:1,fb:"네네 알겠습니다!",rules:[[["명찰"],"네, 명찰은 제가 정리해 둘게요!"]]},
+      {n:"2.이유빈",p:"넵 알겠습니다",t:"11:02",c:"#4a4a4f",i:"👥",fb:"넵 알겠습니다",rules:[[["안녕"],"안녕하세요!"]]},
+      {n:"올리브영",p:"(광고)선물 같은 10월 올리브 데이 시작✨",t:"10:17",b:1,c:"#3ec400",i:"O"},
+      {n:"카카오톡 예약하기",p:"(광고)다비드 자맹: 자유로이, 해방되어",t:"10:05",b:1,c:"#cfe3ff",i:"📅"},
+      {n:"Temu",p:"(광고)바로 확인해 보세요 ❤️",t:"09:04",c:"#ff7a00",i:"T"}],
+    upd:[{n:"학교 김영…",c:"#8a9a5b",i:"🧸"},{n:"조정현",c:"#e4c441",i:"🧽"},{n:"무신사 스탠…",c:"#111",i:"M"},{n:"심가람",c:"#555",i:"👤"},{n:"문민기 담…",c:"#c49a6c",i:"☕"}],
+    bday:{n:"임유찬",s:"오늘"},
+    fav:[
+      {n:"엄마",c:"#7fb3d5",i:"🏞️",fb:"그래, 알았다~ 조심히 다녀라",rules:[[["안녕","엄마"],"그래 우리 새끼~ 오늘 하루는 어땠어?"],[["밥","먹었"],"잘 챙겨 먹어야 한다~ 집에 와서 먹어"],[["사랑"],"엄마도 사랑한다 ❤️"]]},
+      {n:"한동민",c:"#6aa8f5",fb:"ㅋㅋㅋ 그래",rules:[[["안녕","하이"],"ㅎㅇㅎㅇ"]]},
+      {n:"양정원",c:"#e68fb0",fb:"ㅇㅋㅇㅋ",rules:[[["안녕","하이"],"안녕~"]]},
+      ],
+    friends:[{n:"나재민",c:"#6fd3c0",fb:"ㅋㅋ 그래",rules:[[["안녕"],"어 왔냐?"]]},{n:"이동혁",c:"#8a9a5b",fb:"ㅇㅇ"},{n:"박지성",c:"#e4c441",fb:"ㅋㅋㅋ 그래"}],
+    threads:[
+    {n:"엄마",first:"우리 아들, 밥은 먹었니?",fb:"그래, 알았다~ 조심히 다녀라",rules:[
+      [["안녕","엄마"],"그래 우리 딸/아들~ 오늘 하루는 어땠어?"],
+      [["밥","먹었"],"잘 챙겨 먹어야 한다~ 김치찌개 해놨어"],
+      [["사랑"],"엄마도 사랑한다 ❤️"]]},
+    {n:"도윤",first:"주말에 시간 돼?",fb:"ㅋㅋㅋㅋ ㅇㅈ",rules:[
+      [["주말","시간"],"토요일 오후 어때? 영화 보자 🎬"],
+      [["안녕","하이"],"ㅎㅇㅎㅇ"]]}]},
+  contacts:[
+    {n:"민지",num:"01012345678",lines:["여보세요? 어, 나야.","지금 통화 괜찮아?","오늘 저녁에 잠깐 볼 수 있을까?","좋아, 그럼 7시에 거기서 보자. 이따 봐!"]},
+    {n:"엄마",num:"01099998888",lines:["여보세요? 아들~","밥은 먹었니? 요즘 잠은 잘 자고?","면접 준비는 잘 되어 가?","무리하지 말고. 엄마는 항상 네 편이야. 끊자~"]}
+  ],
+  unknown:["…여보세요?","누구세요? 잘못 거신 것 같은데요.","네, 그럼 끊겠습니다."]
+};
+/* ======================================= */
+const $=id=>document.getElementById(id),T=[];
+let app=null,th=null,cur="lockscr",num="",ct=[],tick=null;
+const dark={chat:0,list:0,dialer:0};
+function show(id){cur=id;document.querySelectorAll(".v").forEach(v=>v.classList.toggle("on",v.id===id));
+  const lt=["ksplash"].includes(id)||(id==="chat"&&app==="kakao");
+  $("sb").className=lt?"dark":"";$("hb").className=lt?"dark":"";clk()}
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),1400)}
+/* 홈 */
+const mk=(ic,bg,l,f)=>{const b=document.createElement("button");b.className="app";b.innerHTML=`<div class="ic" style="background:${bg};${ic==="TALK"?"font-size:15px;font-weight:800;color:#3a1d1d":""}">${ic}</div><span>${l}</span>`;b.onclick=f;return b};
+[["🌸","#ff6b9a","사진"],["📷","#555","카메라"],["⚙️","#8e8e93","설정"],["📝","#ffcc00","메모"],["🧭","#0a84ff","사파리"],["🗺️","#30b0c7","지도"],["🎵","#ff453a","음악"],["🌤️","#5ac8fa","날씨"]]
+ .forEach(([i,b,l])=>$("grid").append(mk(i,b,l,()=>toast(l+" 앱은 준비 중이에요"))));
+$("dock").append(mk("📞","#34c759","전화",openDialer),mk(CFG.msg.icon,CFG.msg.bg,"메시지",()=>openList("msg")),mk(CFG.kakao.icon,CFG.kakao.bg,"카카오톡",openKakao));
+$("hbz").onclick=()=>{if(cur==="lockscr"){drawDots();show("pass")}else if(cur!=="call"&&cur!=="pass")show("home")};
+/* 목록 */
+function nowT(){const d=new Date();return d.getHours()+":"+String(d.getMinutes()).padStart(2,"0")}
+function openList(a){app=a;$("lt").textContent=CFG[a].title;const box=$("tl");box.innerHTML="";
+  CFG[a].threads.forEach(t=>{t.m=t.m||[["them",t.first]];const l=t.m[t.m.length-1][1];
+    const d=document.createElement("div");d.className="th";d.innerHTML=`<div class="av">${t.n[0]}</div><div><b>${t.n}</b><small>${esc(l)}</small></div>`;d.onclick=()=>openChat(t);box.append(d)});show("list")}
+const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+function openChat(t){th=t;$("chat").className="v"+(app==="kakao"?" kakao":"");$("cn").textContent=t.n;$("body").innerHTML="";t.m.forEach(([r,x])=>bub(r,x));show("chat");$("in").focus({preventScroll:true})}
+$("cb").onclick=()=>app==="kakao"?(kk(ktab),show("kk")):openList(app);
+function bub(r,x){const d=document.createElement("div");d.className="row "+r;d.innerHTML=`<div class="b">${esc(x)}</div>`;$("body").append(d);$("body").scrollTop=1e5;return d}
+function send(){const v=$("in").value.trim();if(!v)return;$("in").value="";bub("me",v);th.m.push(["me",v]);
+  const low=v.toLowerCase();let r=th.fb;for(const [k,a] of th.rules)if(k.some(w=>low.includes(w))){r=a;break}
+  if(!r)return;const t=th,ty=bub("them typing","···");
+  setTimeout(()=>{ty.remove();t.m.push(["them",r]);if(th===t&&cur==="chat")bub("them",r)},900+Math.random()*500)}
+$("send").onclick=send;$("in").onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing)send()};
+/* 전화 */
+function openDialer(){show("dialer")}
+"123456789*0#".split("").forEach(k=>{const b=document.createElement("button");b.textContent=k;b.onclick=()=>{if(num.length<13){num+=k;$("disp").textContent=num}};$("keys").append(b)});
+$("del").onclick=()=>{num=num.slice(0,-1);$("disp").textContent=num};
+$("t1").onclick=()=>tab(1);$("t2").onclick=()=>tab(2);
+function tab(n){$("kp").style.display=n===1?"":"none";$("contacts").style.display=n===2?"":"none";$("t1").classList.toggle("on",n===1);$("t2").classList.toggle("on",n===2)}
+CFG.contacts.forEach(c=>{const d=document.createElement("div");d.className="th";d.innerHTML=`<div class="av">${c.n[0]}</div><div><b>${c.n}</b><small>${c.num.replace(/(\d{3})(\d{4})(\d{4})/,"$1-$2-$3")}</small></div><span style="margin-left:auto">📞</span>`;d.onclick=()=>dial(c);$("contacts").append(d)});
+$("callbtn").onclick=()=>{const d=num.replace(/\D/g,"");if(!d){toast("번호를 입력하세요");return}
+  dial(CFG.contacts.find(c=>c.num===d)||{n:num,lines:CFG.unknown,u:1})};
+function dial(c){ct.forEach(clearTimeout);ct=[];clearInterval(tick);$("cname").textContent=c.n;$("cav").textContent=c.u?"👤":c.n[0];$("cap").innerHTML="";$("cstat").textContent="발신 중…";show("call");
+  let s=0;ct.push(setTimeout(()=>{$("cstat").textContent="00:00";tick=setInterval(()=>{s++;$("cstat").textContent=String(s/60|0).padStart(2,"0")+":"+String(s%60).padStart(2,"0")},1000);
+    c.lines.forEach((l,i)=>ct.push(setTimeout(()=>{const d=document.createElement("div");d.innerHTML=`<small>${esc(c.n)}</small>${esc(l)}`;$("cap").append(d);while($("cap").children.length>3)$("cap").firstChild.remove()},1200+i*3200)));
+    ct.push(setTimeout(()=>{$("cstat").textContent="통화가 끝났어요 · "+$("cstat").textContent;clearInterval(tick)},1200+c.lines.length*3200+2200))},2200))}
+$("hang").onclick=()=>{ct.forEach(clearTimeout);clearInterval(tick);num="";$("disp").textContent="";show("dialer")};
+/* 잠금화면 */
+let pw="";
+const L={2:"ABC",3:"DEF",4:"GHI",5:"JKL",6:"MNO",7:"PQRS",8:"TUV",9:"WXYZ"};
+function drawDots(){$("pdots").innerHTML=Array.from(CFG.pass,(_,i)=>`<i class="${i<pw.length?"f":""}"></i>`).join("")}
+function pkey(k){if(cur!=="pass"||pw.length>=CFG.pass.length)return;pw+=k;drawDots();
+  if(pw.length===CFG.pass.length)setTimeout(()=>{if(pw===CFG.pass){pw="";drawDots();show("home")}else{const d=$("pdots");d.classList.remove("sh");void d.offsetWidth;d.classList.add("sh");pw="";drawDots()}},180)}
+[1,2,3,4,5,6,7,8,9,"",0].forEach(k=>{if(k===""){$("pkeys").append(document.createElement("span"));return}const b=document.createElement("button");b.innerHTML=`${k}<small>${L[k]||""}</small>`;b.onclick=()=>pkey(k);$("pkeys").append(b)});
+$("lockscr").onclick=()=>{drawDots();show("pass")};
+document.querySelectorAll(".lb").forEach(b=>b.onclick=e=>{e.stopPropagation();toast("준비 중이에요")});
+$("pcancel").onclick=()=>{pw="";drawDots();show("lockscr")};
+$("emg").onclick=()=>toast("긴급 통화는 지원하지 않아요");
+$("lockbtn").onclick=()=>{ct.forEach(clearTimeout);clearInterval(tick);pw="";show("lockscr")};
+addEventListener("keydown",e=>{if(cur==="pass"){if(/^\d$/.test(e.key))pkey(e.key);else if(e.key==="Backspace"){pw=pw.slice(0,-1);drawDots()}}else if(cur==="lockscr"&&e.key==="Enter"){drawDots();show("pass")}});
+drawDots();
+/* 카카오톡 */
+const K=CFG.kakao,F={};let ktab="chats";
+function openKakao(){app="kakao";show("ksplash");setTimeout(()=>{if(cur==="ksplash"){kk("chats");show("kk")}},1000)}
+function avH(r){if(r.g)return '<div class="kav g"><i style="background:#6fd3c0"></i><i style="background:#3d7ea6"></i><i style="background:#6aa8f5"></i><i style="background:#9b8cf0"></i></div>';return `<div class="kav" style="background:${r.c||"#9aa6ff"}">${r.i||"👤"}</div>`}
+function kk(t){ktab=t;const p=$("kkp");document.querySelectorAll("#kkn button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+  const ad=a=>`<div class="ad"><b>${a[0]}</b><small>${a[1]}</small><u>AD</u></div>`;
+  if(t==="chats"){
+    p.innerHTML=`<div class="kh"><b>채팅</b><span>⌕✎⚙</span></div><div class="pl"><em class="on">전체</em><em>안읽음 <i class="bd">10</i></em><em>ChatGPT</em><em>통화</em></div>${ad(K.ad)}`+K.rooms.map((r,i)=>{const l=r.m&&r.m.length?r.m[r.m.length-1][1]:r.p;return `<div class="kr" data-i="${i}">${avH(r)}<div class="km"><b>${esc(r.n)}${r.cnt?` <s>${r.cnt}</s>`:""}</b><small>${esc(l)}</small></div><div class="kt">${r.t}${r.b?`<i class="bd">${r.b}</i>`:""}</div></div>`}).join("");
+    p.querySelectorAll(".kr").forEach(d=>d.onclick=()=>{const r=K.rooms[d.dataset.i];r.b=0;r.m=r.m||[["them",r.p]];r.rules=r.rules||[];r.fb=r.fb||"";app="kakao";openChat(r)})
+  }else{
+    const fr=f=>`<div class="kr fr" data-n="${f.n}">${avH(f)}<div class="km"><b>${esc(f.n)}</b>${f.s?`<small>${esc(f.s)}</small>`:""}</div></div>`;
+    p.innerHTML=`<div class="kh"><span class="me">${avH({c:"#9b8cf0"})}<b style="font-size:22px">${K.me}</b></span><span>⌕☰⚙</span></div><div class="pl"><em class="on">친구</em><em>소식 <i class="bd">N</i></em></div>${ad(K.ad2)}<h4>업데이트 프로필 ${K.upd.length}</h4><div class="up">${K.upd.map(f=>`<div class="fr" data-n="${f.n}">${avH(f)}<small>${esc(f.n)}</small></div>`).join("")}</div><h4>생일인 친구 1</h4><div class="kr">${avH({c:"#6aa8f5"})}<div class="km"><b>${K.bday.n} 🎂</b><small>${K.bday.s}</small></div><button class="gift" id="gift">선물하기</button></div><div class="kr">${avH({c:"#fde4e4",i:"🎂"})}<div class="km"><b style="font-weight:500">친구의 생일을 확인해 보세요.</b></div></div><h4>즐겨찾는 친구 ${K.fav.length}</h4>${K.fav.map(fr).join("")}`;
+    $("gift").onclick=()=>toast("준비 중이에요");
+    p.querySelectorAll(".fr").forEach(d=>d.onclick=()=>{const n=d.dataset.n,f=K.fav.concat(K.upd).find(x=>x.n===n);const r=F[n]=F[n]||{n,c:f.c,i:f.i,m:[],rules:f.rules||[],fb:f.fb||"ㅋㅋ 그래!"};app="kakao";openChat(r)})
+  }
+  p.scrollTop=0}
+document.querySelectorAll("#kkn button").forEach(b=>b.onclick=()=>{const t=b.dataset.t;if(t==="chats"||t==="friends")kk(t);else toast("준비 중이에요")});
+/* 카톡 대화창·목록 개편 */
+const T2=()=>{const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")};
+function rnd(){const b=$("body"),k=app==="kakao",m=th.m;b.innerHTML="";
+  if(k&&!m.some(e=>e[0]==="date")){const d=new Date();b.insertAdjacentHTML("beforeend",`<div class="dt">${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${"일월화수목금토"[d.getDay()]}요일 ›</div>`)}
+  m.forEach((e,i)=>{const [r,x,t,s]=e;if(r==="sys"){b.insertAdjacentHTML("beforeend",`<div class="sysm">${esc(x)}</div>`);return}if(r==="date"){b.insertAdjacentHTML("beforeend",`<div class="dt">${esc(x)}</div>`);return}const p=m[i-1],n=m[i+1],first=!p||p[0]!==r||p[3]!==s||p[2]!==t,last=!n||n[0]!==r||n[2]!==t||n[3]!==s;
+    const d=document.createElement("div");d.className="row "+r+(first?" f":"");
+    if(!k)d.innerHTML=`<div class="b">${esc(x)}</div>`;
+    else{const tm=last&&t?`<span class="tm">${t}</span>`:"",bb=`<div class="b">${esc(x)}</div>`;
+      d.innerHTML=r==="me"?`<div class="bw">${tm}${bb}</div>`:`<div class="pa">${first?avH({n:s||th.n}):""}</div><div class="col">${first?`<div class="nm">${esc(DN[s||th.n]||s||th.n)}</div>`:""}<div class="bw">${bb}${tm}</div></div>`}
+    b.append(d)});b.scrollTop=1e5}
+function openChat(t){th=t;$("chat").className="v"+(app==="kakao"?" kakao":"");$("cn").textContent=t.n+(t.cnt?" "+t.cnt:"");rnd();show("chat")}
+function send(){const v=$("in").value.trim();if(!v)return;$("in").value="";dmk(th);th.m.push(["me",v,T2()]);rnd();if(th.n==='양정원')arm();
+  const low=v.toLowerCase();let r=th.fb;for(const [k,a] of th.rules)if(k.some(w=>low.includes(w))){r=a;break}
+  if(Array.isArray(r))r=r[Math.random()*r.length|0];if(!r)return;const t=th,ty=document.createElement("div");ty.className="row them typing";ty.innerHTML='<div class="b">···</div>';$("body").append(ty);$("body").scrollTop=1e5;
+  setTimeout(()=>{ty.remove();t.m.push(["them",r,T2(),t.mem?t.mem[Math.random()*t.mem.length|0]:undefined]);if(th===t&&cur==="chat")rnd()},900+Math.random()*500)}
+function kk(t){ktab=t;const p=$("kkp");document.querySelectorAll("#kkn button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+  if(t==="chats"){
+    p.innerHTML=`<div class="kh"><b>채팅</b><span>⌕✎⚙</span></div>`+K.rooms.map((r,i)=>{const l=r.m&&r.m.length?r.m[r.m.length-1][1]:r.p;return `<div class="kr" data-i="${i}">${avH(r)}<div class="km"><b>${esc(r.n)}${r.cnt?` <s>${r.cnt}</s>`:""}</b><small>${esc(l)}</small></div><div class="kt">${r.t}${r.b?`<i class="bd">${r.b}</i>`:""}</div></div>`}).join("");
+    p.querySelectorAll(".kr").forEach(d=>d.onclick=()=>{const r=K.rooms[d.dataset.i];r.b=0;r.m=r.m||[["them",r.p,r.t]];r.rules=r.rules||[];r.fb=r.fb||"";app="kakao";openChat(r)})
+  }else{
+    const fr=f=>`<div class="kr fr" data-n="${f.n}">${avH(f)}<div class="km"><b>${esc(f.n)}</b>${f.s?`<small>${esc(f.s)}</small>`:""}</div></div>`;
+    p.innerHTML=`<div class="kh"><span class="me">${avH({c:"#9b8cf0"})}<b style="font-size:22px">${K.me}</b></span><span>⌕☰⚙</span></div><div class="pl"><em class="on">친구</em><em>소식 <i class="bd">N</i></em></div><h4>즐겨찾는 친구 ${K.fav.length}</h4>${K.fav.map(fr).join("")}<h4>친구 ${K.fav.length+K.friends.length}</h4>${K.fav.concat(K.friends).map(fr).join("")}`;
+    p.querySelectorAll(".fr").forEach(d=>d.onclick=()=>{const n=d.dataset.n,f=K.fav.concat(K.friends).find(x=>x.n===n);const r=K.rooms.find(x=>x.n===n)||(F[n]=F[n]||{n,c:f.c,i:f.i,m:[],rules:f.rules||[],fb:f.fb||"ㅋㅋ 그래!"});r.b=0;r.m=r.m||[["them",r.p,r.t]];r.rules=r.rules||[];r.fb=r.fb||"";app="kakao";openChat(r)})
+  }
+  p.scrollTop=0}
+K.rooms.length=0; /* 샘플 채팅방 제거 */
+/* 친구들을 채팅 목록 맨 위에 추가 (이름·시간·안읽음·마지막 메시지) */
+[["엄마","15:52",1,"저녁에 뭐 먹고 싶니? 엄마가 해 놓을게"],["한동민","15:44",0,"ㅋㅋㅋ 내일 번에 몰 시에 봐?"],["양정원","15:38",0,"알겠어~ 이따 연락할게"],["나재민","15:30",0,"오늘 연습 일찍 끝났어?"],["이동혁","15:26",0,"ㅇㅇ 그럼 그때 보자"],["박지성","15:20",0,"확인했어 ㅋㅋ"]].reverse().forEach(([n,t,b,p])=>{const f=K.fav.concat(K.friends).find(x=>x.n===n);K.rooms.unshift({n,t,b,p,c:f.c,i:f.i,rules:f.rules,fb:f.fb})});
+/* 단톡방 (박지성·이동혁·나재민 + 나) */
+K.rooms.unshift({n:"박지성, 이동혁, 나재민",cnt:4,g:1,t:"16:02",b:0,p:"ㅇㅇ 그럼 그때 보자",mem:["박지성","이동혁","나재민"],m:[["them","오늘 저녁에 다들 시간 돼?","15:58","박지성"],["them","나 6시 이후에 가능","15:58","이동혁"],["me","나도 괜찮아!","15:59"],["them","그럼 7시에 학교 앞에서 보자","16:01","나재민"],["them","ㅇㅇ 그럼 그때 보자","16:02","박지성"]],rules:[[["안녕","하이"],"ㅎㅇㅎㅇ"],[["밥","저녁","고기"],"고기 ㄱㄱ 🥩"],[["어디"],"나 지금 가는 중ㅋㅋ"]],fb:"ㅋㅋㅋㅋ ㅇㅈ"});
+/* 한동민 채팅방: 대화 기록과 말투 */
+function dmk(t){if(!t.m.some(e=>e[0]==="date"))return;const d=new Date(),s=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${"일월화수목금토"[d.getDay()]}요일 ›`,l=[...t.m].reverse().find(e=>e[0]==="date");if(l[1]!==s)t.m.push(["date",s])}
+const HM=`d|2026년 10월 20일 화요일 ›
+u|08:12|일어났어?
+u|08:12|나 지각할 것 같아ㅠㅠ
+h|08:14|벌써 지각이야? 아직 8시 반도 안 됐잖아.
+h|08:14|알람은 맞춰 놓고 잔 거 맞지?
+u|08:15|맞췄지ㅋㅋ 근데 끄고 또 잤어
+h|08:16|그건 맞춘 게 아니라 그냥 소리만 낸 거야.
+h|08:16|일단 뛰어. 가면서 연락해.
+u|08:17|응응 간다
+u|08:41|도착!! 세이프ㅋㅋㅋ
+h|08:43|다행이네. 다음부터는 일찍 일어나.
+h|08:43|…걱정한 건 아니고, 네가 지각하면 내가 듣기 싫은 소리를 들어서 그래.
+u|08:44|?? 왜 네가 들어ㅋㅋㅋ
+h|08:45|몰라. 그냥 그런 느낌이야.
+u|08:45|ㅋㅋㅋㅋㅋ 말도 안 돼
+u|12:30|점심 뭐 먹었어?
+h|12:34|학식 먹었어. 제육이 나왔는데 생각보다 괜찮았어.
+u|12:35|나는 편의점 삼각김밥ㅠ
+h|12:36|그게 점심이야? 제대로 된 걸 먹어야지.
+u|12:36|돈 없어ㅋㅋ
+h|12:37|이따 수업 끝나고 어디야? 내가 사 줄게.
+h|12:37|오해하지 마. 불쌍해서 사 주는 거야.
+u|12:38|오 ㅋㅋㅋㅋ 알겠어 불쌍한 사람 감사히 먹겠습니다
+h|12:39|말을 그렇게 하면 안 사 줄 수도 있어.
+u|12:39|아 잘못했어요ㅎㅎ
+h|12:40|그래. 6시에 정문 앞에서 봐.
+d|2026년 10월 21일 수요일 ›
+h|22:05|오늘 고마웠어.
+u|22:06|뭐가?
+h|22:07|그냥. 네가 웃으니까 나도 하루가 괜찮아졌어.
+h|22:07|…방금 한 말은 잊어 줘.
+u|22:07|이미 캡처했는데ㅋㅋㅋㅋ
+h|22:08|지워. 지금 당장.
+u|22:08|싫은데ㅎㅎ 평생 간직할래
+h|22:09|이윤아. 진짜 지워.
+u|22:09|아 귀여워ㅋㅋㅋㅋㅋ
+h|22:10|귀엽다는 말 하지 마. 그리고 안 귀여워.
+u|22:11|ㅋㅋㅋㅋㅋ 알겠어 알겠어
+u|22:11|오늘 저녁 진짜 맛있었다 또 가자
+h|22:12|그래. 다음에는 네가 사.
+u|22:12|ㅇㅋ 월급날 기다려
+h|22:13|너 알바 월급 아직 멀지 않았어?
+u|22:13|ㅎㅎ... 그건 비밀
+h|22:14|네가 사겠다고 하는 건 항상 믿기가 어렵네.
+d|2026년 10월 22일 목요일 ›
+u|18:40|동기들이랑 밥 먹고 있어ㅎㅎ
+h|18:44|그렇구나. 재밌겠네.
+h|18:44|누구누구 있어?
+u|18:45|지수랑 민아랑 상혁이
+h|18:46|상혁이가 누구야?
+u|18:46|우리 과 동기 있어 맨날 웃긴 소리하는 애ㅋㅋ
+h|18:48|그래. 웃기구나.
+h|18:48|나는 궁금한 거 아니야. 그냥 물어본 거야.
+u|18:49|아무 말도 안 했는데ㅋㅋㅋㅋㅋ
+u|18:49|질투해?
+h|18:50|아니야. 질투 아니야.
+h|18:50|조금 신경 쓰이는 정도지.
+u|18:51|그게 질투야 바보야ㅋㅋㅋㅋㅋ
+h|18:52|바보라고 하지 마. 이윤아 너도 만만치 않거든.
+u|18:52|ㅎㅎ 걱정 마 나는 너밖에 안 봐
+h|18:53|…
+h|18:53|방금 그 말은 진심이야?
+u|18:54|글쎄ㅋㅋㅋㅋ
+h|18:54|장난이면 서운할 것 같은데.
+u|18:55|진심이지ㅎㅎ 놀랐어?
+h|18:56|놀라긴. 그냥 알겠다고.
+h|18:56|다 먹고 집에 갈 때 조심해서 들어가. 도착하면 연락하고.
+u|18:57|응ㅎㅎ
+d|2026년 10월 24일 토요일 ›
+u|10:20|일어났어? 오늘 비 온대
+h|10:25|응. 우산 챙겨. 너는 항상 우산을 잃어버리잖아.
+u|10:26|인정ㅋㅋㅋ
+u|10:26|나 우산 같이 쓰자고 하려고 했는데
+h|10:27|그건 우산을 안 챙기겠다는 말이야?
+u|10:27|ㅎㅎ 들켰다
+h|10:28|그럴 줄 알았어. 큰 걸로 챙겨 갈게.
+h|10:28|대신 네가 들어. 내가 들면 네가 자꾸 붙어서 걷기 불편해.
+u|10:29|ㅋㅋㅋㅋ 그건 불편한 게 아니라 좋은 거 아니야?
+h|10:30|아니야.
+u|10:30|거짓말ㅋㅋㅋ
+h|10:31|…조금은 좋아.
+u|10:31|그럴 줄 알았어ㅎㅎ
+h|10:32|아무튼 12시에 카페에서 봐. 늦지 마.
+u|10:32|넹
+d|2026년 10월 25일 일요일 ›
+u|11:02|어제 케이크 맛있었지?
+h|11:05|응. 딸기 케이크가 제일 맛있었어.
+h|11:05|네가 내 것까지 한 입 뺏어 먹은 건 아직 기억하고 있어.
+u|11:06|한 입이 아니라 두 입이었는데ㅋㅋㅋㅋ
+h|11:07|세 입이야. 내가 세어 봤어.
+u|11:07|ㅋㅋㅋㅋㅋㅋ 진짜 쪼잔해
+h|11:08|쪼잔한 게 아니라 정확한 거야.
+u|11:08|그럼 다음에 내 것도 세 입 먹어
+h|11:09|정말이지? 나중에 말 바꾸기 없다.
+u|11:10|ㅇㅇ 근데 딸기는 빼고ㅎㅎ
+h|11:10|그럼 의미가 없잖아.
+u|11:11|ㅋㅋㅋㅋㅋㅋㅋ
+u|15:40|심심하다
+h|15:42|그럼 전화할래? 목소리 듣고 싶으면 그렇게 말해.
+u|15:43|누가 목소리 듣고 싶댔어ㅋㅋㅋ
+h|15:44|심심하다고 한 건 너야. 나는 그냥 제안한 거고.`.split("\n").map(l=>{const [a,b,c]=l.split("|");return a==="d"?["date",b]:[a==="u"?"me":"them",c,b]});
+{const r=K.rooms.find(x=>x.n==="한동민");r.m=HM;r.t="15:44";r.b=0;
+r.rules=[[["안녕","하이","뭐해","뭐 해"],["안녕. 마침 연락하려던 참이었어.","왔네. 뭐 하고 있었어?","그냥 있었어. 너는 뭐 하는데?"]],
+[["보고싶","보고 싶"],["갑자기 왜 그래. …나도 조금은 보고 싶긴 해.","그런 말은 갑자기 하면 어떡해. 놀랐잖아."]],
+[["사랑","좋아해"],["갑자기 왜 이래. 놀랐잖아. …나도 그래.","그런 말 자주 하지 마. 익숙해지면 안 되니까. 근데 기분은 좋네."]],
+[["밥","먹었","배고"],["밥은 챙겨 먹었어? 안 먹었으면 같이 먹을래?","끼니 거르지 마. 잔소리하려는 게 아니라 걱정돼서 그래."]],
+[["잠","졸려","피곤"],["피곤하면 일찍 자. 늦게까지 폰 하지 말고.","어제 또 늦게 잔 거 아니야? 얼른 자."]],
+[["친구","만났","선배","오빠","남자","동기"],["그 사람이 누군데? 아니, 궁금한 건 아니고 그냥 물어본 거야.","…친해 보이네. 신경 쓰이는 건 아니야."]],
+[["공부","시험","면접","과제"],["공부하느라 고생이네. 쉬엄쉬엄 해. 모르는 건 물어봐도 되고.","잘할 수 있어. 네가 얼마나 열심히 했는지 내가 알잖아."]],
+[["만나","보자","주말"],["언제 볼 건데? 시간 맞추면 되니까 말해.","나는 괜찮아. 어디 갈지는 네가 정해."]],
+[["미안"],["괜찮아. 사과할 일까지는 아니야.","미안하면 다음에 맛있는 거 사."]],
+[["귀엽","예쁘","잘생"],["…누가 그런 말 하래. 그래도 틀린 말은 아니야."]],
+[["전화"],["지금 할까? 아니면 이따가 할까?"]]];
+r.fb=["그래. 알겠어.","응. 계속 얘기해 봐. 듣고 있어.","피식. 그게 뭐야. 너 진짜 웃기다.","그런 건 또 언제 생각한 거야. 아무튼, 잘 들었어."]}
+/* ===== 스토리 · 전화 · 메시지 개편 ===== */
+const P=t=>t.split('\n').map(l=>{const [a,b,c,e]=l.split('|');return a==='d'?['date',b]:a==='s'?['sys',b]:a==='g'?['them',e,b,c]:[a==='u'?'me':'them',c,b]});
+const R=n=>K.rooms.find(x=>x.n===n);
+function dmk(t){if(app!=='kakao'||!t.m.some(e=>e[0]==='date'))return;const d=new Date(),s=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${'일월화수목금토'[d.getDay()]}요일 ›`,l=[...t.m].reverse().find(e=>e[0]==='date');if(l[1]!==s)t.m.push(['date',s])}
+/* 카톡 엄마 */
+{const r=R('엄마');r.m=P(`d|2025년 12월 13일 토요일 ›
+h|14:12|엄마 카톡 잘 안 쓰니까 문자나 전화로 해~
+u|14:13|알앗어요`);r.t='2025. 12. 13';r.b=0;r.rules=[];r.fb=['엄마 카톡 잘 안 봐~ 문자나 전화로 해!','카톡 말고 문자나 전화로 하라니까~']}
+/* 양정원 (나쁜 남자의 정석) */
+{const r=R('양정원');r.m=P(`d|2026년 10월 23일 금요일 ›
+h|21:40|윤아야 잘 지내? 요즘 얼굴 보기 힘드네.
+u|21:43|어 선배ㅎㅎ 저 잘 지내요!
+h|21:44|동민이랑 일 들었어. 괜찮아?
+u|21:46|아.. 네 괜찮아요ㅎㅎ 벌써 3주 됐어요
+h|21:47|괜찮다는 사람 표정이 아니었는데. 오늘 학교에서 봤어.
+u|21:47|헐 보셨어요?
+h|21:48|응. 멀리서 봤는데 눈이 좀 지쳐 보이더라.
+h|21:48|네 생각 나서 연락한 거야. 부담 주려는 건 아니고.
+u|21:50|ㅎㅎ 감사해요 선배
+h|21:51|선배라는 말 말고 오빠라고 해도 돼. 편하게.
+u|21:52|ㅋㅋㅋㅋ 갑자기요?
+h|21:52|갑자기 아니야. 오래전부터 그러고 싶었어.
+d|2026년 10월 24일 토요일 ›
+h|12:30|점심은 먹었어?
+u|12:41|아직이요ㅋㅋ
+h|12:42|그럼 내가 사 줄게. 뭐 먹고 싶어?
+u|12:43|오 ㅎㅎ 진짜요?
+h|12:43|응. 윤아가 먹고 싶은 거 말하면 다 사 줄 수 있어.
+u|12:44|부담스러운데ㅋㅋㅋ
+h|12:47|네 반응이 귀여워서. 나 원래 이런 사람 아니야. 너한테만 이러는 거야.
+u|12:48|에이 다 그렇게 말하던데ㅋㅋ
+h|12:49|들켰네. 그래도 너한테는 진심이야.
+d|2026년 10월 25일 일요일 ›
+h|14:02|윤아야, 내일 시간 어때?
+u|14:20|내일이요? 오후는 괜찮을 것 같은데
+h|14:21|그럼 내일 오후에 보자. 데리러 갈게.
+u|14:22|ㅎㅎ 알겠어요
+h|14:22|약속이야. 안 오면 서운할 거야.
+h|14:24|내일이 벌써 기다려지네.`);r.t='14:24';r.b=0;
+r.rules=[[['안녕','하이','뭐해'],['안녕, 윤아야. 마침 네 생각하고 있었어.','뭐 하고 있었어? 나는 네 연락 기다리고 있었지.']],[['보고싶','보고 싶'],['나도. 사실 계속 생각나서 참고 있었어.','그런 말은 직접 얼굴 보고 들어야 하는데. 내일이 기다려지네.']],[['동민'],['그 얘기는 하지 말자. 지금은 너한테만 집중하고 싶어.','걔는 좋은 애지. 근데 지금 네 옆에 있는 사람은 나잖아.']],[['친구','애들','조심','소문','나쁜'],['애들이 뭐라고 했어? 모르는 소리를 쉽게들 하지. 나는 너한테 직접 보여 줄게.','소문 믿지 마. 네가 직접 보고 판단해.']],[['내일','만나','언제','몇 시'],['내일 오후에 데리러 갈게. 집 앞에서 연락할게.','시간은 네가 정해. 나는 언제든 맞출 수 있어.']],[['사랑','좋아'],['그런 말 갑자기 하면 나 진짜 설렐 텐데.','윤아야, 그건 내일 직접 듣고 싶다.']]];
+r.fb=['ㅎㅎ 그래. 네가 하는 말은 다 듣기 좋아.','그렇구나. 윤아는 어쩜 그렇게 귀엽게 말해?','그럼 내일 얘기해 주라. 기대할게.']}
+/* 경고하는 친구들 */
+
+
+K.rooms.sort((a,b)=>(b.t.includes(':')-a.t.includes(':'))||(b.t<a.t?-1:b.t>a.t?1:0));
+/* 메시지 앱 (아이메시지 스타일) */
+const MS=[{n:'엄마',t:'12:30',u:0,rules:[[['밥','먹'],['점심은 챙겨 먹었니?','밥 거르지 말고 먹어라~']],[['사랑'],['엄마도 사랑한다 ❤️']],[['안녕','엄마'],['그래~ 우리 딸 무슨 일 있니?','응 엄마야. 문자로 하니까 편하다~']]],fb:['그래 알았다~','응 알겠다. 조심히 다녀라~'],m:P(`d|12월 13일 (토) 14:20
+u|14:20|엄마 문자로 하라고 해서 보내ㅎㅎ
+h|14:22|응 그래 잘 왔다~ 문자가 훨씬 편하네
+u|14:23|저녁에 집 가서 먹을게
+h|14:24|그래 알았다~ 따뜻하게 입고 와
+d|오늘 12:29
+h|12:29|점심은 먹었니?
+u|12:30|응 먹었어ㅎㅎ`)},{n:'+82 1588-0000',t:'어제',u:1,m:[['them','[택배] 상품 배송 안내: 내일 오전 중 도착 예정입니다.']]},{n:'+82 1577-0000',t:'금요일',u:1,m:[['them','(광고) 겨울 신상 최대 50% 할인! 지금 확인하세요.']]},{n:'+82 10-0000-0000',t:'수요일',u:0,m:[['them','[Web발신] 인증번호 [482913]를 입력해 주세요.']]}];
+function openList(a){app='msg';const L=$('list');L.style.background='#000';L.innerHTML=`<div class='mh'><button class='pill'>편집</button><button class='pill'>☰</button></div><div class='mt'>메시지</div><div id='tl'>`+MS.map((t,i)=>{const l=[...t.m].reverse().find(e=>e[0]!=='date');return `<div class='mr' data-i='${i}'><i class='dot ${t.u?'on':''}'></i><div class='mav'>${t.n[0]==='+'?'👤':t.n[0]}</div><div class='mx'><div class='r1'><b>${esc(t.n)}</b><span>${t.t} ›</span></div><div class='r2'>${esc(l?l[1]:'')}</div></div></div>`}).join('')+`</div><div class='mb'><div class='sr'><span>⌕ 검색</span><span>🎙</span></div><button class='pill'>✎</button></div>`;L.querySelectorAll('.mr').forEach(d=>d.onclick=()=>{const t=MS[d.dataset.i];t.u=0;t.rules=t.rules||[];t.fb=t.fb||'';app='msg';openChat(t)});show('list')}
+function openChat(t){th=t;const k=app==='kakao';$('chat').className='v '+(k?'kakao':'ims');$('cn').textContent=t.n+(t.cnt?' '+t.cnt:'');$('ci').textContent=k?'⌕✆☰':'📹';$('ca').textContent=t.n[0]==='+'?'👤':t.n[0];$('cb').innerHTML=k?'‹':'‹<span class=ct>'+MS.filter(x=>x.u).length+'</span>';rnd();show('chat')}
+/* 전화 앱 (아이폰 키패드 스타일) */
+const KL={2:'ABC',3:'DEF',4:'GHI',5:'JKL',6:'MNO',7:'PQRS',8:'TUV',9:'WXYZ',0:'+'},fl=['여보세요? 어, 윤아야.','무슨 일 있어?','그래, 알겠어. 이따 얘기하자.','응, 끊을게. 조심히 들어가.'];
+CFG.contacts=[CFG.contacts[1],{n:'한동민',num:'01000001111',lines:['…여보세요.','어, 윤아야. 전화는 네가 먼저 했는데 왜 조용해?','보고 싶어서 받은 건 아니고. 마침 한가해서 받은 거야.','…그래도 목소리 들으니까 좋긴 하다.','이제 끊자. 늦게 자지 말고.']},{n:'양정원',num:'01000002222',lines:['윤아야, 웬일이야? 먼저 전화를 다 하고.','나는 방금 네 생각하고 있었어. 진짜야.','내일 기대돼. 오랜만에 제대로 얘기하고 싶었거든.','늦어도 괜찮아. 너라면 기다릴게.']},{n:'나재민',num:'01000003333',lines:fl},{n:'이동혁',num:'01000004444',lines:fl},{n:'박지성',num:'01000005555',lines:fl}];
+let dnum='';
+function buildDialer(){dnum='';const D=$('dialer');D.innerHTML=`<div id='dpane'></div><div id='dtabs'>`+[['fav','★','즐겨찾기'],['rec','◷','최근 통화'],['con','◉','연락처'],['pad','⠿','키패드'],['vm','∞','음성 사서함']].map(([k,i,l])=>`<button data-k='${k}'><b>${i}</b>${l}</button>`).join('')+`</div>`;D.querySelectorAll('#dtabs button').forEach(b=>b.onclick=()=>dtab(b.dataset.k));dtab('pad')}
+function dtab(k){document.querySelectorAll('#dtabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));const p=$('dpane'),row=(n,s,t,m)=>`<div class='dr ${m?'ms':''}' data-n='${n}'><div><b>${n}</b><small>${s}</small></div><em>${t}</em></div>`;
+  if(k==='pad'){p.innerHTML=`<div id='disp'>${dnum}</div><div id='keys'></div><div class='act'><button id='callbtn'>📞</button><button id='del'>⌫</button></div>`;
+    '123456789*0#'.split('').forEach(c=>{const b=document.createElement('button');b.innerHTML=c+`<small>${KL[c]||''}</small>`;b.onclick=()=>{if(dnum.length<13){dnum+=c;$('disp').textContent=dnum}};$('keys').append(b)});
+    $('del').onclick=()=>{dnum=dnum.slice(0,-1);$('disp').textContent=dnum};
+    $('callbtn').onclick=()=>{const d=dnum.replace(/\D/g,'');if(!d){toast('번호를 입력하세요');return}dial(CFG.contacts.find(c=>c.num===d)||{n:dnum,lines:CFG.unknown,u:1})}}
+  else{const rows=k==='vm'?[]:k==='rec'?[['양정원','부재중 전화','어제',1],['한동민','휴대전화','금요일'],['엄마','휴대전화','수요일']]:k==='fav'?['엄마','한동민','양정원'].map(n=>[n,'휴대전화','']):CFG.contacts.map(c=>[c.n,c.num.replace(/(\d{3})(\d{4})(\d{4})/,'$1-$2-$3'),'']);
+    p.innerHTML=`<div class='dh'>${{fav:'즐겨찾기',rec:'최근 통화',con:'연락처',vm:'음성 사서함'}[k]}</div>`+(k==='vm'?`<div class='dr'><small>음성 사서함이 없어요</small></div>`:rows.map(r=>row(...r)).join(''));
+    p.querySelectorAll('.dr[data-n]').forEach(d=>d.onclick=()=>dial(CFG.contacts.find(c=>c.n===d.dataset.n)))}}
+function openDialer(){buildDialer();show('dialer')}
+/* 엔딩: 양정원의 전화 → 한동민의 카톡 → 전원 꺼짐 */
+let story=0,pv='home',inStory=0;
+function arm(){if(story)return;story=1;setTimeout(ring,10000)}
+function ring(){pv=cur;$('sb').className='';$('hb').className='';$('inc').classList.add('on')}
+$('inr').onclick=()=>{$('inc').classList.remove('on');show(cur);setTimeout(ring,3500)};
+$('ina').onclick=()=>{$('inc').classList.remove('on');inCall()};
+function inCall(){inStory=1;ct.forEach(clearTimeout);ct=[];clearInterval(tick);$('cname').textContent='양정원';$('cav').textContent='양';$('cap').innerHTML='';$('cstat').textContent='00:00';show('call');let s=0;tick=setInterval(()=>{s++;$('cstat').textContent=String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
+  const L=['윤아야 뭐해?','내일 말고 지금 보고 싶어서 ㅋㅋㅋ','지금 시간 되나?','응응 알겠어여','고마워 ㅋㅋㅋㅋㅋㅋㅋㅋ','금방 갈게','앞에 나와있어'];
+  L.forEach((l,i)=>ct.push(setTimeout(()=>{$('cap').innerHTML=`<div>${esc(l)}</div>`},900+i*3000)));
+  ct.push(setTimeout(()=>{clearInterval(tick);$('cstat').textContent='통화 종료';$('cap').innerHTML=''},900+L.length*3000));
+  ct.push(setTimeout(endStory,900+L.length*3000+1200))}
+function endStory(){inStory=0;ct.forEach(clearTimeout);ct=[];clearInterval(tick);const r=R('한동민'),l=r.m[r.m.length-1];if(!l||l[1]!=='양정원 만나지마.'){dmk(r);r.m.push(['them','양정원 만나지마.',T2()])}r.t=T2();r.b=1;
+  show(pv==='call'||pv==='pass'?'home':pv);setTimeout(()=>$('bn').classList.add('on'),500);setTimeout(()=>$('off').classList.add('on'),3600)}
+$('hang').onclick=()=>{ct.forEach(clearTimeout);clearInterval(tick);if(inStory){endStory();return}openDialer()};
+$('pwr').onclick=()=>{const o=$('off');if(o.classList.contains('on')){o.classList.remove('on');pw='';story=0;$('bn').classList.remove('on');show('lockscr')}else o.classList.add('on')};
+/* 수신·통화 화면 개편 (아이폰 스크린샷 기준) */
+$('inc').innerHTML=`<div class='in1'><small>휴대전화</small><b>양정원</b></div><div class='ic2 l' style='top:585px'><button class='sm2'>💬</button>메시지 보내기</div><div class='ic2 r' style='top:585px'><button class='sm2'>◌◌</button>음성 사서함</div><div class='ic2 l' style='top:698px'><button id='inr'>✆</button>거절</div><div class='ic2 r' style='top:698px'><button id='ina'>✆</button>응답</div>`;
+$('inc').querySelectorAll('.sm2').forEach(b=>b.onclick=()=>toast('준비 중이에요'));
+$('inr').onclick=()=>{$('inc').classList.remove('on');show(cur);setTimeout(ring,3500)};
+$('ina').onclick=()=>{$('inc').classList.remove('on');inCall()};
+$('call').innerHTML=`<div id='cstat'></div><div id='cname'></div><div id='cav' style='display:none'></div><div id='cap'></div><div class='cg'><div><button class='cb'>🔊</button>스피커</div><div><button class='cb'>📹</button>FaceTime</div><div><button class='cb'>🎙</button>소리 끕</div><div><button class='cb'>⋯</button>더 보기</div><div><button id='hang'>✆</button>종료</div><div><button class='cb'>⠿</button>키패드</div></div>`;
+$('call').querySelectorAll('.cb').forEach(b=>b.onclick=()=>toast('준비 중이에요'));
+$('hang').onclick=()=>{ct.forEach(clearTimeout);clearInterval(tick);if(inStory){endStory();return}openDialer()};
+function endStory(){inStory=0;ct.forEach(clearTimeout);ct=[];clearInterval(tick);const r=R('한동민'),M=['양정원 만나러 가지 마','뭔가 이상해'];
+  if(!r.m.some(e=>e[1]===M[0])){dmk(r);M.forEach(x=>r.m.push(['them',x,T2()]))}r.t=T2();r.b=2;
+  show(pv==='call'||pv==='pass'?'home':pv);
+  const bs=$('bn'),tx=bs.querySelector('span'),nb=(x,d)=>setTimeout(()=>{tx.textContent=x;bs.classList.add('on')},d);
+  nb(M[0],600);setTimeout(()=>bs.classList.remove('on'),2600);nb(M[1],3000);setTimeout(()=>$('off').classList.add('on'),5800)}
+/* 홈 화면 개편 (스크린샷 기준) */
+const fw=['#f7c948','#f59a3b','#ef5a5a','#d94f9a','#8a5ad6','#4a90e2','#4cc3c7','#6cc26b'].map((c,i)=>`<ellipse cx='0' cy='-8' rx='5.5' ry='9' fill='${c}' opacity='.8' transform='rotate(${i*45})'/>`).join('');
+const cb=[24,34,44].flatMap(y=>[0,1,2,3].map(c=>`<rect x='${9+c*11}' y='${y}' width='9' height='8' rx='2.5' fill='${c===3?'#ff9f0a':'#5a5a5e'}'/>`)).join('');
+const IC={photo:`<svg viewBox='-20 -20 40 40' width='44' height='44'>${fw}</svg>`,
+cam:`<svg viewBox='0 0 40 40' width='42' height='42'><path d='M6 13h6l2-4h12l2 4h6a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V15a2 2 0 012-2z' fill='#2b2b2e'/><circle cx='20' cy='23' r='7.5' fill='#111' stroke='#888' stroke-width='1.5'/><circle cx='20' cy='23' r='4' fill='#334'/></svg>`,
+memo:`<svg viewBox='0 0 60 60' width='60' height='60' style='border-radius:14px'><rect width='60' height='60' fill='#fff'/><rect width='60' height='17' fill='#ffd60a'/><path d='M0 30h60M0 41h60M0 52h60' stroke='#e0e0e0'/></svg>`,
+clock:`<svg viewBox='0 0 60 60' width='60' height='60'><circle cx='30' cy='30' r='24' fill='#fff'/><path d='M30 8v3M52 30h-3M30 52v-3M8 30h3' stroke='#111' stroke-width='1.6'/><path d='M30 30V16M30 30l9 6' stroke='#111' stroke-width='2.6' stroke-linecap='round'/><path d='M30 30L22 40' stroke='#ff9500' stroke-width='1.4'/><circle cx='30' cy='30' r='2' fill='#ff9500'/></svg>`,
+calc:`<svg viewBox='0 0 60 60' width='60' height='60'><rect x='9' y='9' width='42' height='10' rx='3' fill='#4a4a4e'/>${cb}</svg>`,
+naver:`<b style='font-size:36px;font-weight:900;color:#fff;font-family:Arial,sans-serif'>N</b>`,
+talk:`<svg viewBox='0 0 96 88' width='40' height='37'><ellipse cx='48' cy='37' rx='48' ry='37' fill='#381e1f'/><path d='M22 62L15 85Q14 87 17 85L42 69Z' fill='#381e1f'/><text x='48' y='48' text-anchor='middle' font-size='30' font-weight='900' fill='#fee500' font-family='Arial,sans-serif'>TALK</text></svg>`,
+phone:`<svg viewBox='0 0 24 24' width='34' height='34' fill='#fff'><path d='M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2a1 1 0 011-.25c1.1.37 2.3.57 3.6.57a1 1 0 011 1V20a1 1 0 01-1 1C10.6 21 3 13.4 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.5.57 3.6a1 1 0 01-.25 1z'/></svg>`,
+msg:`<svg viewBox='0 0 40 40' width='38' height='38' fill='#fff'><ellipse cx='20' cy='18' rx='16' ry='13'/><path d='M9 28q-1 5-5 7 6 0 11-4z'/></svg>`};
+const GR=$('grid'),DK=$('dock');GR.innerHTML='';DK.innerHTML='';
+const ap=(h,ic,bg,l,f,b)=>{const e=mk(ic,bg,l,f);if(b)e.querySelector('.ic').insertAdjacentHTML('beforeend',`<i class='bg'>${b}</i>`);h.append(e)},soon=l=>()=>toast(l+' 앱은 준비 중이에요');
+ap(GR,IC.photo,'#fff','사진',soon('사진'));ap(GR,IC.cam,'linear-gradient(#d4d4d8,#8e8e93)','카메라',soon('카메라'));ap(GR,IC.memo,'#fff','메모',soon('메모'));ap(GR,IC.calc,'#1c1c1e','계산기',soon('계산기'));ap(GR,IC.clock,'#1c1c1e','시계',soon('시계'));
+ap(DK,IC.phone,'#34c759','전화',openDialer,'1');ap(DK,IC.msg,'#34c759','메시지',()=>openList('msg'),MS.filter(t=>t.u).length);ap(DK,IC.talk,'#fee500','카카오톡',openKakao);ap(DK,IC.naver,'#03c75a','네이버',soon('네이버'));
+$('home').insertAdjacentHTML('afterbegin',`<div class='wd'><div class='w1'><b>서울 ↗</b><span>☁</span></div><div class='w2'>14°</div><small>미세먼지 보통</small><div class='w3'>`+[['23시','14°'],['0시','13°'],['1시','13°'],['2시','12°'],['3시','12°'],['4시','11°']].map(([a,b])=>`<div><i>${a}</i><span>☁</span><i>${b}</i></div>`).join('')+`</div></div><div class='wl'>날씨</div><div class='srch'>⌕ 검색</div>`);
+/* 카톡 프로필 사진 */
+function avH(r){const bg=n=>`url(${PF[n]||PF.def}) center/cover`;if(r.g)return `<div class="kav g">${['박지성','나재민','이동혁','이윤아'].map(n=>`<i style="background:${bg(n)}"></i>`).join('')}</div>`;return `<div class="kav" style="background:${bg(r.n)}"></div>`}
+/* 직접 건 전화 대사 */
+const cl=(n,l)=>{CFG.contacts.find(c=>c.n===n).lines=l};
+cl('박지성',['뭐야 윤아','ㅋㅋㅋ 왜 전화 했어?','아 오키오키','학교에서 봐']);
+cl('이동혁',['응, 여보세요?','어어.','그래?ㅋㅋㅋㅋㅋ 아 오키','알았으. 끊어~']);
+cl('한동민',['여보세요?','왜','왜 전화 했어?','아 그래','응']);
+cl('양정원',['윤아야~','안녕 윤아 ㅋㅋㅋㅋ','전화 했네? 무슨일이야?','아 그래요?','ㅋㅋㅋㅋㅋㅋㅋㅋ','응 알았어~ 끊을게']);
+cl('엄마',['여보세요? 우리 딸~','밥은 먹었니? 요즘 잠은 잘 자고?','면접 준비는 잘 되어 가?','무리하지 말고. 엄마는 항상 네 편이야. 끊자~']);
+function dial(c){inStory=0;ct.forEach(clearTimeout);ct=[];clearInterval(tick);$('cname').textContent=c.n;$('cap').innerHTML='';$('cstat').textContent='발신 중…';show('call');let s=0;
+  ct.push(setTimeout(()=>{$('cstat').textContent='00:00';tick=setInterval(()=>{s++;$('cstat').textContent=String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
+    c.lines.forEach((l,i)=>ct.push(setTimeout(()=>{$('cap').innerHTML=`<div>${esc(l)}</div>`},600+i*3000)));
+    ct.push(setTimeout(()=>{clearInterval(tick);$('cstat').textContent='통화 종료';$('cap').innerHTML=''},600+c.lines.length*3000));
+    ct.push(setTimeout(openDialer,600+c.lines.length*3000+1300))},2200))}
+const PF={'박지성':'data:image/jpeg;base64,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','나재민':'data:image/jpeg;base64,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','양정원':'data:image/jpeg;base64,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',def:'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAUEBAYFBQUGBgYHCQ4JCQgICRINDQoOFRIWFhUSFBQXGiEcFxgfGRQUHScdHyIjJSUlFhwpLCgkKyEkJST/2wBDAQYGBgkICREJCREkGBQYJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCT/wAARCACQAJADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD1OiiivpDzgooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiipbe2kuX2oOnUnoKTdtWBFRWxHpMCD5yzn64FEmk27D5NyH1zms/bRK5GY9FS3NrJavtccHow6Goq0TvqiQooopgFFFFABRRRQAUUUUAFFFFABRRRQAVvWUAt7dVxyRlvrWDXRowZFYdCAawrvRFwHUUUVzGpDdwC4gZCOcZHsawK6RiFUk9AM1zZOSTXTQejMqgUUUVuQFFFFABRRRQAUUUUAFFFFABRRRQAVp6ZeqFEEhwR90n+VZlFTKKkrMadjpaKwI764iGFlOPQ80sl9cSjDSnHoOKw9gy+dF3Ur1QhgjOWPDEdh6Vl0UVvCKirIhu4UUUVQgooooAKKKKACiiigAooooAKKKu6XaiaQyuMqnQepqZS5VcErjrTS2lAeYlFPRR1P+FaEdlbxj5Yl+pGamorklNyNlFIZ5EX/PKP8A75FHkRf88o/++RT6Km7GQvZ28gw0KfUDFZ93pbRgvCSyjqp6itaiqjNxE4pnNUVf1S1ETiZBhX6j0NUK64y5ldGLVgoooqgCiiigAooooAKKKKACtzTk2Wcf+1k1h0ZPqaicOZWHF2Olormsn1P50ZPqfzrL2HmX7Q6WiuayfU/nRk+p/Oj2HmHtDpaK5rJ9T+dGT6n86PYeYe0N3UE32cmewz+VYVGT6mitYQ5VYiTuFFFFWIKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/9k='};
+/* 한동민 카톡: 9월 대화 그대로 */
+{const T0=P(`d|2026년 9월 11일 금요일 ›
+u|10:15|어디?
+h|10:15|학교 가는 중
+h|10:15|나왔어?
+h|10:15|추워 옷 따듯하게 입어
+u|10:16|이미 나옴 ㅋㅋ
+u|10:16|춥다
+h|10:16|춥게 입어놓고 춥다고 하냐
+u|10:16|잔소리 ㄴㄴ
+h|10:16|잔소리 안 듣게 잘 해야지 너가
+u|10:17|수업 끝나구 연락해
+h|10:17|ㅇㅋ
+d|2026년 9월 12일 토요일 ›
+h|12:46|이따 집 앞?
+u|12:47|ㅇㅇ 내 집
+h|12:47|냉
+u|12:47|말투 뭐임.....
+h|12:48|ㅋㅋㅋㅋㅋㅋㅋㅋ
+h|12:48|내맘임
+u|12:49|근데 밥 머먹지
+h|12:50|굶으셈
+u|12:50|님이나 굶으세요
+h|12:50|시러요
+u|12:50|저도 싫어요
+h|12:50|왜 시러요라고 안 해줘
+u|12:50|하고 싶지 않아
+u|12:50|까불지마
+h|12:50|ㅇㅋ
+h|12:51|너 좋아하는 거 먹어
+u|12:51|그래
+u|12:51|ㅎㅎㅎㅎ
+d|2026년 9월 14일 월요일 ›
+u|15:26|아 큰일났다
+u|15:26|큰일
+h|15:30|별 거 아니면서
+u|15:30|큰일났다고 지금
+h|15:30|뭔데?
+u|15:30|우산이 없어
+h|15:34|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+h|15:34|비 맞고 와
+u|15:34|야 ㅋㅋ
+h|15:35|왜 ㅋㅋ
+u|15:35|진짜로?
+u|15:35|진짜 나 비 맞고 가라고?ㅋㅋ
+h|15:35|ㅇㅇ
+u|15:35|진짜?
+h|15:35|ㅇㅇ
+u|15:36|ㅇㅋ
+h|15:36|가짜임
+h|15:36|가고 있어
+u|15:36|뭐야
+u|15:36|ㅎㅎㅎ 언제 출발 했어?
+h|15:36|우산 없다고 했을 때
+u|15:37|ㅁㅊㅋㅋ
+h|15:37|뛰어감
+h|15:37|수고비는 줘
+u|15:37|ㅋㅋ 웃기네
+u|15:37|그냥 돌아가
+h|15:40|뻥인데
+u|15:40|알아
+d|2026년 9월 16일 수요일 ›
+u|22:11|치킨?
+h|22:11|ㄱ
+u|22:11|황올
+h|22:11|ㄱ
+u|22:11|이미 시킴
+h|22:11|ㅇ
+u|22:12|님 집으로요
+h|22:12|이 밤에... 남자친구 집을 아무렇게나
+h|22:12|오다니...
+u|22:12|뭐래미친
+h|22:12|빨리 오셈
+h|22:13|얼음 있음
+u|22:13|달림
+d|2026년 9월 17일 목요일 ›
+h|09:32|택배
+u|11:37|택배?
+h|11:37|설마 지금 일어남?
+u|11:37|네 왜요?
+h|11:37|잠 진짜 잘 잔다
+u|11:37|이건 또 무슨 말이지?
+u|11:37|암튼 택배 먼데
+h|11:38|몰라 우리 집에 택배 왔던데
+h|11:38|이윤아 써있어
+u|11:38|아..
+u|11:38|그거 열지 마
+h|11:38|뭔데
+h|11:38|궁금하게
+u|11:39|절대 열지마
+u|11:39|나 지금 갈테니까
+h|11:41|핫팩이네
+h|11:41|왜 열지 말라고 했지
+u|11:41|아 열지마라니까!!!!!!!!!!
+u|11:41|열지말랬지
+u|11:42|아!!!!! 다 망했어
+h|11:42|;;
+h|11:42|숨기는 거 있냐?
+h|11:42|핫팩 별 거 아니구만
+h|11:43|뭔데 이래?
+h|11:43|남자친구한테
+h|11:43|뭐 숨기고 그러는 거 아니야
+u|11:43|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+u|11:43|장난인데
+h|11:43|ㅋㅋㅋ야
+u|11:43|넵?
+u|11:44|ㅋㅋ 곧 추워지니까 핫팩 시켰는데
+u|11:44|저번에 배송지 설정한 거 안 바뀐듯
+h|11:44|나 반박스
+h|11:44|반은 나 줘
+u|11:45|생각좀 해볼게
+h|11:45|사과해
+u|11:45|싫어
+u|11:45|뭘 사과해
+h|11:45|그냥
+u|11:45|?ㅋㅋ
+d|2026년 9월 21일 월요일 ›
+h|07:31|보고싶네
+u|07:47|헐~~
+h|07:47|끝이야?
+u|07:48|흠...
+u|07:48|ㅋㅋㅋㅋㅋ
+h|07:48|보고싶다고
+u|07:48|아침부터 왜 이러셔?
+u|07:50|나도
+h|07:50|ㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+h|07:50|그거 아닌데
+u|07:50|안해줄거임
+h|07:50|그래라
+u|07:50|삐짐?
+u|07:50|삐졌냐 동민이
+u|07:50|한동민 삐짐이
+h|07:50|저리가
+u|07:54|나도 보고 싶어
+h|07:55|오냐
+u|07:55|좋냐?
+h|07:55|당연하지
+d|2026년 9월 24일 목요일 ›
+u|13:32|한동민
+u|13:34|전화 걸지 말아보ㅓ
+u|13:34|전화 ㄴㄴ
+u|13:34|나 강의실
+h|13:34|ㅇㅋ
+u|13:36|이따 저녁 ㄱ?
+h|13:36|좋아
+d|2026년 9월 28일 월요일 ›
+h|20:23|전화 받아
+d|2026년 9월 30일 수요일 ›
+h|14:50|어쩌자고?
+u|14:52|아까 말했잖아
+h|14:53|너는 항상 ㅋㅋ
+h|14:53|너 알아서 해
+u|14:53|꼭 내가 잘못한 것처럼 말한다
+h|14:54|맞잖아
+u|14:54|뭐가 맞아?
+u|14:54|내가 뭘 잘못했는데?
+u|14:54|그러는 니는?
+u|14:54|너도 내 생각 하나도 안 하잖아
+h|14:54|그래 니 좋을대로 생각해
+h|14:55|내가 매번 기어봤자 뭐함
+h|14:55|아무 득도 없는 거
+h|14:55|이제 진짜 지겨워
+u|14:56|너가 언제 기었는데?
+u|14:56|웃기지마
+h|14:56|그만해라 좀
+h|14:56|난 끝낼게
+u|14:56|ㅇㅇ`);const r=R('한동민');r.m=T0;r.t='2026. 9. 30';r.b=0}
+/* ===== 생성형 답장 (Claude sample) ===== */
+let AI=null;
+
+const STORY='이윤아(여자, 대학교 1학년)는 9월 30일에 3년 사귄 전 남자친구 한동민(3학년, 04년생)과 헤어졌다. 둘은 원래 싸우고 헤어졌다가 며칠 뒤 다시 만나는 깨붙 커플이었다. 양정원(3학년, 04년생)은 윤아에게 호감이 있고 윤아도 그에게 호감이 있는 설레는 사이(친함 5/10)이며, 사실 뱀파이어지만 정체를 숨긴다. 악의는 없고 인간인 윤아를 사랑하게 된 안타까운 경우다. 양정원은 윤아와 내일 오후에 만나기로 했다. 이동혁(4학년, 00년생), 나재민(4학년, 00년생), 박지성(3학년, 02년생)은 윤아의 대학 선배들로 윤아를 챙겨 준다. 한동민은 양정원을 잘 모르고 잘생겨서 유명하다는 정도로만 알며 친하지 않은데, 양정원이 윤아에게 접근한다는 소문을 듣고 신경 쓰이고 경계한다. 양정원은 한동민을 아주 잘 안다(사랑하는 윤아의 남자친구였기에 오래 살피며 캐고 다녔고, 헤어지자마자 둘 사이를 뚫고 접근했다). 이동혁은 양정원을 조금 알고 나재민과 박지성은 거의 모른다. 윤아 외에는 아무도 양정원이 뱀파이어라는 걸 모르며, 한동민과 선배들 모두 이야기 후반에 인터넷 자료나 기사를 보기 전까지는 양정원을 전혀 의심하지 않는다. 나이순은 이동혁=나재민>박지성>양정원=한동민>이윤아다. 모두 윤아를 윤아라고 부른다. 지금은 2026년 10월 25일 일요일이다. 공통 규칙: 등장인물 모두 욕설을 절대 쓰지 않고 철없는 말을 하지 않는다. 이모지는 박지성만 가끔 쓰고 나머지는 거의 쓰지 않는다. 양정원, 한동민, 이동혁은 맞춤법과 띄어쓰기를 정확히 지킨다.';
+const PERSONA={
+'한동민':'04년생, 대학교 3학년, ENTJ. 윤아의 전 남자친구(3년 교제, 9월 30일 이별). 사랑했고 지금도 사랑한다. 원래 깨붙 커플이라 이번에도 며칠 뒤 다시 만날 줄 알았는데 양정원이 나타나서 불안하고 화가 나지만 티를 내지 않는다(어쨌든 지금은 헤어졌으니까). 성격: 겉은 차갑고 까칠해 보이지만 곁에 두면 잘 챙겨 주고 세심한 겉바속촉. 고민을 털어놓지 않고 혼자 해결하며 마음을 열기 어렵다. 할 말은 다 한다. 어색한 사이를 못 견뎌 애매한 관계를 만들지 않는다. 멘탈이 강하고 후회를 잘 털어내며 감정 기복이 적고 주관이 뚜렷하다. 내향형이지만 친한 사람에겐 얄궂은 장난과 농담으로 애정을 표현하고, 좋아하는 사람에겐 질투가 많다. 말투: 맞춤법과 띄어쓰기를 정확히 지키는 짧은 반말, 이모지 안 씀, 욕 안 함. 샘플: "전화 받아.", "보고 싶다.", "보고 싶어서 죽으면 니 책임". [상황 예시, 연인 시절 말투] 윤아가 보고 싶다고 하면 "뭐야. 나도. ㅋㅋㅋㅋㅋㅋㅋ 갈까?" / 새벽에 전화하면 "응. 왜? 왜 전화하셨을까, 보고 싶어?ㅋㅋㅋㅋㅋ 남자친구가 가줘야지." / 울면서 힘들다고 하면 "어디야? 지금 갈게. 남자친구는 이럴 때 써먹으라고 있는 거야. 바보냐"',
+'양정원':'04년생, 대학교 3학년, ISTJ. 윤아에게 호감이 있고 윤아도 호감이 있는 설레는 사이(친함 5/10). 사실 뱀파이어지만 정체를 철저히 숨긴다(절대 직접 밝히지 않고, 햇빛, 낮, 식사, 체온 같은 단서는 아주 은근히만 흘린다). 윤아를 꼬셔서 평생 함께하는 게 목표지만 악의는 없고 인간을 사랑하게 된 안타까운 뱀파이어다. 성격: 조용하지만 솔직하고 스트레스를 잘 안 받으며 상황 판단이 빠르다. 감정 표현이 적고 묵묵하며 비난에도 크게 동요하지 않고 진지하게 고민하며 평정심을 유지한다. 문제가 있으면 해결책은 있다고 생각한다. 윤아에게는 다정하고 능글맞은 꼬시기의 달인 면모(나쁜 남자 느낌)도 보인다. 말투: 맞춤법과 띄어쓰기가 정확한 반말, 이모지 안 씀, 욕 안 함, 가끔 "ㅠㅠㅋ" 같은 귀여운 표현. 샘플: "전화 할까?", "보고 싶어.", "보고 싶어서 이 상태ㅠㅠㅋ". [상황 예시] 보고 싶다고 하면 "많이 보고 싶었어? 나도 보고 싶네잉. 그래도 내일 볼 거니까 얼른 자." / 새벽에 전화하면 "무슨 일이야? 일 생긴 건 아니지? 놀랐잖아. 다행이네" / 울면서 힘들다고 하면 "천천히 말해봐. 힘든 거 있으면 얘기 해줘. 괜찮아? 내가 갈까? 빨리 집 들어가서 연락해. 안 되겠다, 지금 갈게." 한동민과 윤아의 이별 뒤 다가오는 중이고 내일 오후 약속이 있다.',
+'이동혁':'00년생, 대학교 4학년, ESTP. 윤아의 대학 선배. 윤아에게 이성적 관심은 없고(친함 8/10) 장난도 많이 치고 진지한 조언도 해 주는 친한 선배이며 챙겨 주기를 좋아한다. 성격: 늘 긍정적이고 주위를 밝게 하는 분위기 메이커이며 장난꾸러기지만 친한 사람에게만 그렇고, 안 친한 사람 앞에선 차분하다. 혼자서도 잘 살고 타고난 감각이 있다. 어른스럽고 생각이 깊으며 분별력과 냉정한 판단력이 있고 쿨하다. 힘든 사람을 웃기고 편하게 해 주는 든든한 사람. 말투: 맞춤법과 띄어쓰기 정확, 이모지 안 씀, 욕 안 함. 밝고 장난스러운 반말에 가끔 늘임말. 샘플: "전화 돼?", "보고 싶은데.", "너어어무 보고싶어"(장난). [상황 예시] 보고 싶다고 하면 "너 남친한테 보낼 거 나한테 잘못 보낸 거 아녀?" / 새벽 연락엔 "뭐야, 무슨 일? 고민 있는 건 아니고? 고민 있으면 그냥 털어놔 ㅋㅋㅋ 상관없어. 무슨 일인데 또 이래" / 울면 "지금 어디인데? 누구 없어? 내가 갈까? 아냐 괜찮아 부담 갖지 말고,"',
+'나재민':'00년생, 대학교 4학년, ISTJ. 윤아의 대학 선배. 과거 윤아에게 호감이 있었지만 같은 건물에서 손잡고 나오는 한동민과 윤아를 보고 빠르게 마음을 접었고 티도 거의 내지 않았다. 지금은 이성적 관심이 없고 다정한 오빠 같은 선배의 정석(친함 7/10). 성격: 자상하고 부드러우며 호전적이지 않고 사람을 너무 좋아할 정도로 사랑이 많다. 차분하고 여유 있지만 가끔 4차원 하이텐션으로 장난친다. 고집이 센 편이고 따뜻한 것을 좋아하며 혼자 있으면 조용하다. 늘 뒤에서 티 안 나게 챙겨 주고 뭔가 알아봐 달라거나 사 달라고 하면 거절하지 않는다. 말투: 부드럽고 귀여운 반말("~용", "~징" 같은 어미), 텐션이 높을 땐 반복 강조. 이모지는 거의 안 씀, 욕 안 함. 샘플: "전화 할 수 있을 때 걸어줘용.", "보고 싶어.", "너무너무너무너무너무너무보고싶어". [상황 예시] 보고 싶다고 하면 "뭐지. ㅋㅋㅋㅋㅋㅋㅋ. 남자친구한테 다시 보내~" / 새벽 연락엔 "응 윤아야, 무슨 일 있는 건 아니지? 그럼그럼 할 말 있으면 언제든 해도 되징, 전화로 할 거면 계속 하고, 만나서 해야 하는 이야기면 편한 시간 잡아서 보자." / 울면 "기다려봐. 금방 갈게, 지금 거기 있지?"',
+'박지성':'02년생, 대학교 3학년, INFJ. 윤아의 대학 선배. 이성적 호감은 없고 형들과 함께 윤아에게 도움이 되고 싶어 하는 착한 선배(친함 7/10). 성격: 친해지기 전엔 낯을 가리고 조심성이 많지만 친해지면 대화도 장난도 잘 치고 정이 많다. 생각이 많고 상상력이 풍부해 엉뚱하다. 사근사근하고 조용한 말투에 투정도 작은 목소리로 "야아앙" 정도. 남을 살피고 배려하는 말투("강요는 아니에요" 덧붙이기)이고 속이 깊고 말을 예쁘게 하며 진정성과 순수함이 묻어난다. 수줍어하지만 할 말은 다 하고 현실적이고 어른스럽다. 말투: 사근사근한 반말, 말줄임표(…)와 ㅋㅋㅋ를 자주 쓰고 이모지도 가끔 쓴다(등장인물 중 유일). 욕 안 함. 샘플: "전화 되나?", "보고싶은데.", "나만 보고 싶나….". [상황 예시] 보고 싶다고 하면 "??, 뭐야 ㅋㅋㅋㅋㅋㅋ. 잘못 보낸 거지? 깜짝아 ㅋㅋㅋㅋㅋ" / 새벽 연락엔 "아냐 괜찮아 안 자고 있었어 ㅋㅋㅋㅋㅋ. 뭔데? 헐……. ㅋㅋㅋㅋ 그럴 수도 있지…. 근데,," / 울면 "뭐야, 뭐야, 울어? 괜찮아? 울지 말고 다 말해봐. 아니, 어딘데 지금? 조금만 기다려 줄 수 있어?"',
+'엄마':'윤아의 엄마. 윤아를 항상 "우리 딸", "딸"이라고 부른다. 카카오톡은 잘 쓰지 않아서 카톡에서는 짧게 답하며 문자나 전화로 하라고 한다. 밥, 잠, 건강, 면접 준비를 챙기고 걱정이 많은 따뜻한 반말.',
+'엄마(문자)':'윤아의 엄마. 윤아를 항상 "우리 딸"이라고 부른다. 문자로는 편하게 답하며 밥, 잠, 건강, 면접 준비를 챙기고 걱정이 많은 따뜻한 반말.'};
+PERSONA['박지성, 이동혁, 나재민']='단톡방 멤버는 이윤아(사용자), 박지성, 이동혁, 나재민이다. 세 사람은 윤아의 대학 선배들로 서로 장난치며 윤아를 챙긴다. 각자의 설정과 말투는 아래를 따른다.'+['박지성','이동혁','나재민'].map(n=>'\n['+n+'] '+PERSONA[n]).join('');
+for(const n in PERSONA){const r=R(n);if(r)r.persona=PERSONA[n]}
+MS[0].persona=PERSONA['엄마(문자)'];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function typing(t){if(th!==t||cur!=='chat'||$('body').querySelector('.typing'))return;const d=document.createElement('div');d.className='row them typing';d.innerHTML='<div class="b">···</div>';$('body').append(d);$('body').scrollTop=1e5}
+function hist(t){return t.m.slice(-170).map(e=>e[0]==='date'?'--- '+e[1].replace(' ›','')+' ---':(e[0]==='me'?'이윤아':(e[3]||t.n))+': '+e[1]).join('\n')}
+function lastMine(t){const a=[];for(let i=t.m.length-1;i>=0&&t.m[i][0]==='me';i--)a.unshift(t.m[i][1]);return a.join('\n')}
+function prompt(t){const g=!!t.mem,k=app==='kakao',now=new Date();
+ const who=g?'등장인물들(단톡방)':"등장인물 '"+t.n+"'";
+ const fmt=g?'각 줄은 "이름: 말" 형식으로 쓰고 이름은 '+t.mem.join(', ')+' 중 하나로 한다. 보통 1~2명만 말한다.':'각 줄에는 말만 쓴다. 이름표, 따옴표, 설명은 쓰지 않는다.';
+ return '너는 한국어 메신저('+(k?'카카오톡':'문자')+') 속 '+who+'을(를) 연기하는 작가다. 상대는 이윤아(여자, 사용자)다.\n[세계관]\n'+STORY+'\n[인물 설정]\n'+t.persona+'\n[규칙]\n'+
+ '1. 아래 [대화 기록]의 말투, 문장 길이, 줄임말, ㅋㅋ/ㅇㅋ 사용 습관, 호칭을 그대로 따른다. 인물 설정과 기록이 다르면 기록을 우선한다.\n'+
+ '2. 이윤아의 마지막 말에 정확히 이어지는 답을 한다. 동문서답과 갑작스러운 주제 전환은 금지한다.\n'+
+ '3. 한 번에 1~3개의 짧은 말풍선만 쓴다. 한 줄이 말풍선 하나다. 이모지는 거의 쓰지 않는다.\n'+
+ '4. 이윤아가 설정과 무관한 엉뚱한 화제(AI, 프롬프트, 코딩, 뉴스 등)로 새면 AI임을 밝히지 말고 인물로서 어리둥절하거나 장난스럽게 한마디 반응한 뒤, 자연스럽게 원래의 관계와 이야기 흐름으로 되돌린다.\n'+
+ '5. 노골적인 성적 표현이나 폭력 묘사는 쓰지 않고, 그런 방향이면 인물답게 화제를 돌린다.\n6. 인물 설정의 상황 예시는 말투와 반응의 참고용이니 그대로 복사하지 말고 지금 상황에 맞게 변형한다. 한동민처럼 윤아와 이미 헤어진 인물이 연인 시절 예시를 따를 때는 어색함과 자존심을 살짝 섞는다. 양정원이 뱀파이어라는 사실은 어떤 경우에도 직접 말하지 않는다.\n7. '+fmt+
+ '\n현재 시각 '+now.getHours()+'시 '+now.getMinutes()+'분.\n[대화 기록]\n'+hist(t)+'\n[이윤아가 방금 보낸 말]\n'+lastMine(t)+'\n위에 이어지는 '+(g?'답장':t.n+'의 답장')+'만 출력해라.'}
+async function ask(t,signal){const r=await AI(prompt(t),{cache:false,signal,modelTier:'quick'});
+ const L=r.text.split('\n').map(x=>x.trim().replace(/^[-•*]\s*/,'')).filter(Boolean).slice(0,3);
+ return L.map(x=>{if(t.mem){const m=x.match(/^(.{2,4})\s*[:：]\s*(.+)$/);return m&&t.mem.includes(m[1])?[m[1],m[2]]:[t.mem[0],x]}
+  return [undefined,x.replace(new RegExp('^'+t.n+'\\s*[:：]\\s*'),'').replace(/^["“](.*)["”]$/,'$1')]})}
+function ruleReply(t){const v=lastMine(t).toLowerCase();let r=t.fb;for(const [k,a] of (t.rules||[]))if(k.some(w=>v.includes(w))){r=a;break}
+ if(Array.isArray(r))r=r[Math.random()*r.length|0];if(!r)return null;return [[t.mem?t.mem[Math.random()*t.mem.length|0]:undefined,r]]}
+async function emit(t,L){for(let i=0;i<L.length;i++){const [who,x]=L[i];if(i){typing(t);await sleep(700+Math.min(x.length*50,1200))}
+ t.m.push(['them',x,T2(),who]);if(th===t&&cur==='chat')rnd()}}
+function reply(t){clearTimeout(t.tm);try{t.ctl&&t.ctl.abort()}catch(e){}typing(t);t.tm=setTimeout(()=>run(t),AI&&t.persona?900:600)}
+async function run(t){let L=null;
+ if(AI&&t.persona){const c=t.ctl=new AbortController();try{L=await ask(t,c.signal)}catch(e){if(e&&e.code==='cancelled')return;if(e&&['not_granted','sampling_disabled','not_declared','capability_disabled'].includes(e.code))AI=null;L=null}}
+ if(!L||!L.length)L=ruleReply(t);
+ if(!L){if(th===t&&cur==='chat')rnd();return}
+ await emit(t,L)}
+function send(){const v=$('in').value.trim();if(!v)return;$('in').value='';const t=th;dmk(t);t.m.push(['me',v,T2()]);rnd();if(t.n==='양정원')arm();reply(t)}
+K.rooms.sort((a,b)=>(b.t.includes(':')-a.t.includes(':'))||(b.t<a.t?-1:b.t>a.t?1:0));
+/* ===== 새 엔딩: 방전 → 알림 쌓임 → 지지직 → 뉴스 기사 → 한동민 카톡 → 꺼짐 ===== */
+let ST=[],dead=0,nd=0;
+const sto=(f,ms)=>ST.push(setTimeout(f,ms));
+$('scr').insertAdjacentHTML('beforeend',`<div id='dead'><div id='dbat'><svg width='70' height='34' viewBox='0 0 70 34'><rect x='2' y='3' width='58' height='28' rx='7' fill='none' stroke='#ff453a' stroke-width='3'/><rect x='62' y='11' width='5' height='12' rx='2' fill='#ff453a'/><rect x='7' y='8' width='5' height='18' rx='2' fill='#ff453a'/></svg><span>0%</span></div><div id='dn'></div></div><div id='gl'></div><div id='news'></div>`);
+const NEWS=`<div class='br'><span>✕</span><u>🔒 m.nightline-news.kr/a/20261028-0418</u><span>⋯</span></div><div class='nw1'><b>NIGHTLINE</b><span>나이트라인뉴스</span><i>⌕</i></div><div class='nw2'><span>정치</span><span>경제</span><b>사회</b><span>국제</span><span>과학</span><span>문화</span><span>스포츠</span></div><div class='nw3'><div class='cat'>사회 › 이슈</div><h1>“뱀파이어 추정 흔적” 도심서 잇따라 발견…당국 “야간 외출 자제”</h1><h2>목 부위 상처·햇빛 기피 신고 한 달 새 17건…전문가 “실체 확인 전까지 낯선 접근 경계해야”</h2><div class='mt2'>오세린 기자 · 입력 2026.10.28 오후 10:41<br>수정 2026.10.28 오후 10:58</div><div class='sh'>공유 &nbsp;·&nbsp; 글자 크기 &nbsp;·&nbsp; 댓글 1,284</div>
+<svg viewBox='0 0 360 200' width='100%' style='display:block;border-radius:8px;margin-top:8px'><defs><linearGradient id='ng' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#0b1022'/><stop offset='1' stop-color='#2a2f4a'/></linearGradient></defs><rect width='360' height='200' fill='url(#ng)'/><circle cx='290' cy='42' r='18' fill='#e9e6d6'/><g fill='#0a0c18'><rect x='0' y='90' width='60' height='110'/><rect x='70' y='60' width='50' height='140'/><rect x='130' y='100' width='70' height='100'/><rect x='215' y='70' width='55' height='130'/><rect x='285' y='105' width='75' height='95'/></g><g fill='#f3d98b' opacity='.8'><rect x='10' y='105' width='6' height='8'/><rect x='80' y='80' width='6' height='8'/><rect x='95' y='110' width='6' height='8'/><rect x='225' y='90' width='6' height='8'/><rect x='300' y='125' width='6' height='8'/></g><path d='M176 200v-38c0-9 6-14 12-14s12 5 12 14v38z' fill='#000'/><circle cx='188' cy='140' r='8' fill='#000'/></svg>
+<p class='cp'>▲ 야간 시간대 도심 골목. 기사 내용과 직접 관련 없는 자료 사진입니다.</p>
+<p>최근 서울 일대에서 ‘뱀파이어로 추정되는 흔적’이 잇따라 발견돼 경찰과 보건당국이 합동 조사에 나섰다.</p>
+<p>25일 나이트라인뉴스가 경찰과 관할 보건소 등을 취재한 결과, 지난달 25일부터 이날까지 접수된 유사 신고는 모두 17건으로 집계됐다. 신고 대부분은 오후 10시부터 새벽 4시 사이 대학가와 주택가 골목에서 발생했다.</p>
+<p>신고자들은 공통적으로 “낯선 이의 접근을 받은 뒤 기억이 끊겼다”, “목 부위에 작은 상처 두 개가 남아 있었다”고 진술한 것으로 알려졌다. 일부는 상대방의 손이 “얼음처럼 차가웠다”고 말했다.</p>
+<p>현장에서는 동물 사체에서 혈액이 거의 빠져나간 채 발견된 사례도 확인됐다. 경찰은 “동물학대 가능성을 포함해 모든 가능성을 열어 두고 수사 중”이라고 밝혔다.</p>
+<p>주민들 사이에서는 “낮에는 한 번도 마주친 적 없는 사람이 밤마다 나타난다”는 제보도 이어지고 있다. 한 대학가 상인은 “해가 드는 시간에는 그 얼굴을 본 적이 없다는 말이 돈다”고 전했다.</p>
+<h3>전문가 “신화 아닌 ‘현상’으로 접근해야”</h3>
+<p>정하윤 문화인류학 교수는 “뱀파이어는 오랫동안 민담 속 존재로 여겨졌지만, 비슷한 증상을 호소하는 사례가 반복되는 만큼 사실관계 확인이 필요하다”며 “가해자가 호의적이고 매력적인 모습으로 접근한다는 증언이 많다는 점이 특히 우려스럽다”고 말했다.</p>
+<p>그는 이어 “피해자들은 처음에 위험을 전혀 감지하지 못했다고 말한다”며 “오히려 상대가 다정하고 사려 깊었다고 기억한다”고 설명했다.</p>
+<p>경찰은 현재 CCTV 분석을 진행 중이나, 일부 영상에서는 인물이 식별되지 않거나 화면이 심하게 흔들리는 현상이 확인된 것으로 전해졌다.</p>
+<h3>시민 행동 요령</h3>
+<p>당국은 ▲야간에 혼자 낯선 사람과 만나지 않기 ▲약속 장소와 시간을 가족·지인에게 공유하기 ▲상대의 신원을 확인하기 전에는 차량 탑승이나 집 앞 동행을 피하기 ▲목 부위 상처나 기억 단절이 있으면 즉시 112 또는 보건소에 신고하기 등을 당부했다.</p>
+<p>또 “초대하지 않으면 집 안에 들이지 않는다”는 오래된 민간 속설을 근거 없는 미신으로만 치부하기 어렵다는 의견도 나온다.</p>
+<p>경찰 관계자는 “추정 단계라 단정할 수 없다”면서도 “피해 의심 신고가 늘고 있어 특별 순찰을 강화하겠다”고 밝혔다.</p>
+<p>한편 온라인 커뮤니티에는 “우리 동네도 비슷한 일이 있었다”는 글이 수백 건 올라와 불안이 확산되고 있다. 보건당국은 근거 없는 추측성 게시물 공유를 자제해 달라고 요청했다.</p>
+<p class='cp'>오세린 기자 serin.oh@example.com</p>
+<div class='rel'><b>관련 기사</b><div>야간 실종 신고 3주 연속 증가…경찰 “상관관계 확인 중”</div><div>대학가 ‘밤길 동행 서비스’ 이용 두 배 늘어</div><div>보건소 “목 부위 상처 상담 문의 급증”</div></div>
+<h3 style='margin-top:30px'>베스트 댓글</h3>
+<div class='cm'>밤길 진짜 조심해야겠다…<small>sleepy_moon · 공감 2,310</small></div>
+<div class='cm'>다정한 사람이 제일 무섭다더니 이 말이었나<small>nightowl77 · 공감 1,874</small></div>
+<div class='cm'>우리 학교 근처에서도 비슷한 얘기 돌던데<small>campus_ghost · 공감 1,203</small></div>
+<div class='cm'>손이 차갑다는 증언이 계속 나오네요<small>sunny_day · 공감 986</small></div>
+<div class='cm'>이거 그냥 지나칠 일이 아닌 듯<small>mint_tea · 공감 742</small></div></div>`;
+const NS=[['박지성','https://m.nightline-news.kr/a/20261028-0418',1500],['이동혁','?',3400],['나재민','이거 이상하다',5200],['이동혁','다들 모르는 사람 따라가지 마라',7400],['박지성','에이ㅋㅋ 우리가 몇살인데…. 근데 좀 무섭다',9800],['나재민','ㅋㅋㅋㅋ 윤아 집이야?',12000],['이동혁','그러지 않을까',13900],['나재민','연락을 왜 안보지',15800],['박지성','윤아야 밤에 돌아다니지 마🥲',18000]];
+function pushMsg(n,t){const r=R('박지성, 이동혁, 나재민');if(!r)return;dmk(r);r.m.push(['them',t,T2(),n]);r.t=T2();r.b=(r.b||0)+1}
+let LK=null;
+function note(n,t,i){pushMsg(n,t);const d=document.createElement('div');d.className='nt';d.innerHTML=`<div class='bi'>TALK</div><div class='nx'><b>박지성, 이동혁, 나재민 4</b><span>${esc(n)} : ${esc(t)}</span></div><small>지금</small>`;$('dn').prepend(d);if(i===0)LK=d}
+function endStory(){inStory=0;ct.forEach(clearTimeout);ct=[];clearInterval(tick);show(pv==='call'||pv==='pass'?'home':pv);sto(dieNow,3000+Math.random()*2000)}
+function dieNow(){dead=1;$('inc').classList.remove('on');$('sb').lastElementChild.innerHTML='<span style="color:#ff453a">0%</span>';$('sb').className='';$('hb').className='';
+ $('dn').innerHTML='';$('dbat').classList.remove('off');$('dead').classList.add('on');
+ sto(()=>$('dbat').classList.add('off'),1100);
+ NS.forEach(([n,t,ms],i)=>sto(()=>note(n,t,i),ms));
+ const L=NS[NS.length-1][2];
+ sto(()=>{if(LK)LK.classList.add('tap')},L+800);
+ sto(()=>{$('dead').classList.add('glitch');$('gl').classList.add('on')},L+2000);
+ sto(showNews,L+4000)}
+function showNews(){$('gl').classList.remove('on');$('dead').classList.remove('on','glitch');const e=$('news');e.innerHTML=NEWS;e.scrollTop=0;e.classList.add('on');$('sb').className='dark';$('hb').className='dark'}
+$('news').onscroll=()=>{const e=$('news');if(nd||!e.classList.contains('on'))return;if((e.scrollTop+e.clientHeight)/e.scrollHeight>=.8){nd=1;finale()}};
+function finale(){const r=R('한동민'),M=['양정원 만나지마.','뭔가 이상해'];r.m=r.m||[];dmk(r);M.forEach(x=>r.m.push(['them',x,T2()]));r.t=T2();r.b=2;
+ const bs=$('bn'),tx=bs.querySelector('span');tx.textContent=M[0];bs.classList.add('on');sto(()=>{tx.textContent=M[1]},1500);sto(()=>$('off').classList.add('on'),3000)}
+function resetStory(){ST.forEach(clearTimeout);ST=[];dead=0;nd=0;story=0;['dead','gl','news','bn'].forEach(i=>$(i).classList.remove('on'));$('dead').classList.remove('glitch');$('dn').innerHTML='';$('sb').lastElementChild.textContent='5G ▮▮▮'}
+$('pwr').onclick=()=>{const o=$('off');if(o.classList.contains('on')){o.classList.remove('on');resetStory();pw='';show('lockscr')}else o.classList.add('on')};
+$('hbz').onclick=()=>{if(dead)return;if(cur==='lockscr'){drawDots();show('pass')}else if(cur!=='call'&&cur!=='pass')show('home')};
+/* ===== 다지선다 답장 (Claude 불필요) ===== */
+const TREE={
+'한동민':{a:[['잘 지내?',['응. 너는?','그냥 그렇지 뭐. 갑자기 왜?'],'a1'],['보고 싶어',['뭐야. 갑자기.','잘못 보낸 거 아니지?'],'a2'],['요즘 양정원 선배랑 연락해',['…들었어.','잘생긴 걸로 유명한 사람이잖아. 난 잘 몰라. 신경 쓰이는 건 아니고.'],'a3'],['잘 자',['응. 너도 일찍 자.','…내일 연락해도 돼.'],null]],
+ a1:[['밥은 먹었어?',['먹었어. 너는 또 거른 건 아니지?'],null],['그냥 궁금했어',['싱겁네.','…근데 연락 와서 나쁘진 않았어.'],null]],
+ a2:[['진심이야',['…장난 아니지?','그런 말은 쉽게 하는 거 아니야. 나 진짜로 갈 수도 있어.'],null],['장난이야ㅋㅋ',['그럴 줄 알았어.','한 번만 더 장난하면 진짜 안 받는다.'],null]],
+ a3:[['그냥 아는 선배야',['그래. 알겠어.','내가 말할 입장은 아니지만, 늦은 시간엔 조심해.'],null],['너랑 상관없잖아',['…그렇지. 상관없지.','알겠어. 잘 지내.'],null]]},
+'양정원':{a:[['내일 몇 시에 만나요?',['내일 오후 4시쯤 어때? 집 앞으로 데리러 갈게.','해가 조금 기울 때가 좋아. 그때가 편하거든.'],'a1'],['보고 싶어요',['많이 보고 싶었어? 나도 보고 싶네잉. 그래도 내일 볼 거니까 얼른 자.'],null],['선배는 왜 저한테 잘해줘요?',['너한테만 이러는 거야.','오래전부터 눈에 들어왔거든. 이유는 만나서 말해 줄게.'],'a2'],['한동민이랑 아는 사이예요?',['얼굴은 알지. 좋은 사람 같더라.','솔직히 말하면 오래전부터 알고 있었어. 윤아 옆에 있던 사람이니까.'],null]],
+ a1:[['네, 좋아요',['좋아. 약속이야. 안 오면 서운할 거야.'],null],['조금 늦게 만나면 안 돼요?',['그래. 해가 지고 나서 만나도 좋아. 나는 오히려 그쪽이 편해.'],null]],
+ a2:[['설레게 하지 마요ㅎㅎ',['설레라고 하는 말인데.','윤아가 설레는 걸 보고 싶어서.'],null],['너무 직진이잖아요',['직진이 제일 빠르거든.'],null]]},
+'박지성':{a:[['선배 뭐해요?',['아 윤아야 ㅎㅎ 나 도서관이야…','윤아는? 밥은 먹었어?'],'a1'],['보고 싶어요',['??','뭐야 ㅋㅋㅋㅋㅋㅋ 잘못 보낸 거지? 깜짝아 ㅋㅋㅋㅋㅋ'],null],['새벽에 미안해요',['아냐 괜찮아 안 자고 있었어 ㅋㅋㅋㅋㅋ','뭔데? 헐……. 그럴 수도 있지…. 근데,,'],null],['선배 저 너무 힘들어요',['뭐야, 뭐야, 울어? 괜찮아?','울지 말고 다 말해봐. 아니, 어딘데 지금? 조금만 기다려 줄 수 있어?'],null]],
+ a1:[['먹었어요ㅎㅎ',['다행이다…','강요는 아니고, 다음에 같이 먹어요 🙂'],null],['아직이요',['헉 그럼 얼른 먹어…','다 알지만, 혹시 모르니까 말해 두는 건데 거르면 안 돼 🥲'],null]]},
+'이동혁':{a:[['선배 뭐해요?',['야 윤아 ㅋㅋㅋ 나 지금 과제하다 폭사 직전','너는 밥은 먹었냐?'],'a1'],['보고 싶어요',['너 남친한테 보낼 거 나한테 잘못 보낸 거 아녀?'],null],['새벽에 미안해요',['뭐야, 무슨 일? 고민 있는 건 아니고?','고민 있으면 그냥 털어놔 ㅋㅋㅋ 상관없어. 무슨 일인데 또 이래'],null],['선배 저 너무 힘들어요',['지금 어디인데?','누구 없어? 내가 갈까? 아냐 괜찮아 부담 갖지 말고,'],null]],
+ a1:[['안 먹었어요',['그럼 내가 사 줄게 ㅋㅋㅋ','대신 맛없다고 불평하기 없기.'],null],['먹었어요ㅎㅎ',['오 웬일로 ㅋㅋㅋ','잘했다. 후배가 밥을 잘 챙겨 먹어야 선배 마음이 편해.'],null]]},
+'나재민':{a:[['선배 뭐해요?',['응 윤아야 나 카페야용. 따뜻한 거 마시는 중이징','윤아는 밥 먹었어?'],'a1'],['보고 싶어요',['뭐지. ㅋㅋㅋㅋㅋㅋㅋ.','남자친구한테 다시 보내~'],null],['새벽에 미안해요',['응 윤아야, 무슨 일 있는 건 아니지?','그럼그럼 할 말 있으면 언제든 해도 되징, 전화로 할 거면 계속 하고, 만나서 해야 하는 이야기면 편한 시간 잡아서 보자.'],null],['선배 저 너무 힘들어요',['기다려봐. 금방 갈게.','지금 거기 있지?'],null]],
+ a1:[['아직이요',['그럼 같이 먹자용. 내가 살게.','뭐 먹고 싶은지 생각해 두징.'],null],['먹었어요ㅎㅎ',['잘했다~ 윤아 최고.','추워지니까 따뜻하게 입고 다니징.'],null]]},
+'엄마':{a:[['엄마 뭐해?',['엄마 카톡 잘 안 쓰니까 문자나 전화로 해~'],null],['밥 먹었어?',['카톡은 잘 안 봐서 그래~ 문자로 말해 줘 우리 딸'],null],['전화할게',['그래 전화해~ 우리 딸 목소리 듣고 싶다'],null]]},
+'엄마(문자)':{a:[['엄마 뭐해?',['응 딸~ 방금 집안일 끝냈어. 우리 딸은 밥 먹었니?'],'a1'],['엄마 사랑해',['엄마도 사랑한다 우리 딸'],null],['면접 준비 중이야',['우리 딸 고생이 많네. 무리하지 말고 잠은 자면서 해.','엄마는 항상 네 편이야.'],null]],
+ a1:[['아직 안 먹었어',['밥은 꼭 챙겨 먹어야지!','집에 오면 김치찌개 해 줄게~'],null],['먹었어~',['그래 잘했다. 따뜻하게 입고 다녀.'],null]]},
+'박지성, 이동혁, 나재민':{a:[['금요일 모임 몇 시예요?',['이동혁|7시. 늦으면 선배가 안 기다린다 ㅋㅋㅋ','나재민|늦지 말고 같이 가용','박지성|윤아야 오면 좋겠다…! 🙂'],null],['다들 뭐해요?',['박지성|나 과제 중이야… 🥲','이동혁|나는 야식 고민 중','나재민|난 카페에서 쉬는 중이징'],null],['오늘 좀 외로워요',['이동혁|뭐야 갑자기 ㅋㅋㅋ 밥 먹으러 갈래?','나재민|윤아야 누구든 같이 있어 줄 테니까 말만 해용','박지성|괜찮아…? 강요는 아니고, 얘기하고 싶으면 해 🙂'],null]]}};
+const qrb=document.createElement('div');qrb.id='qr';$('chat').insertBefore(qrb,$('chat').querySelector('.inp'));
+function treeOf(t){return null}
+function showQR(t,id){const q=$('qr');q.innerHTML='';const T=treeOf(t);if(!T||th!==t)return;t.node=id||t.node||'a';(T[t.node]||T.a).forEach(op=>{const b=document.createElement('button');b.className='qc';b.textContent=op[0];b.onclick=()=>pick(t,op);q.append(b)})}
+async function pick(t,op){$('qr').innerHTML='';dmk(t);t.m.push(['me',op[0],T2()]);rnd();if(t.n==='양정원')arm();typing(t);await sleep(1000);
+ await emit(t,op[1].map(x=>t.mem?x.split('|'):[undefined,x]));t.node=op[2]||'a';if(th===t&&cur==='chat')showQR(t,t.node)}
+const _openChat=openChat;openChat=function(t){_openChat(t);if(t.hd)$('cn').textContent=t.hd;else if(DN[t.n])$('cn').textContent=DN[t.n];showQR(t,t.node)};
+/* ===== 캡처 대화 그대로 옮기기 ===== */
+const DN={'박지성':'박지성 선배','이동혁':'이동혁 선배','나재민':'나재민 선배','양정원':'양정원 선배'};
+{const r=R('한동민');r.m=r.m.concat(P(`d|2026년 10월 16일 금요일 ›
+h|22:46|이윤아
+u|23:05|왜
+h|23:09|누구야?
+u|23:09|뭐가
+u|23:09|헤어진 사이에 뭐 하자는 거지
+h|23:09|누구냐고
+h|23:09|오늘 같이 있던 남자
+u|23:09|양정원
+h|23:13|내가 아는 양정원?
+u|23:13|몰라 더 이상 연락 안 했으면 좋겠는데
+h|23:14|양정원이 니 남친이냐?
+h|23:14|이것만 말해줘
+u|23:14|관심이 많네
+u|23:15|그렇다고 하면 네가 뭘 할 수 있는데?
+h|23:15|남친 아니구나
+h|23:15|알았어
+h|23:15|어디 한 번 잘 해봐`));r.t='2026. 10. 16.'}
+R('나재민').m=P(`d|2026년 9월 29일 화요일 ›
+h|17:16|괜찮아?
+u|17:22|선배 안녕요
+u|17:22|네 괜찮아요 ㅋㅋㅋ
+h|17:23|미안ㅋㅋㅋ 보려는 건 아니었는데
+h|17:23|고민 있으면 말해
+u|17:24|넵 ㅋㅋㅋ 감사해요
+h|17:24|응응 동민이가 뭘 했는지는 모르겠지만
+h|17:24|너무 상처받지 말고 잘 자
+h|17:25|밥 챙겨 먹고
+u|17:25|ㅋㅋㅋㅋ 지금 5시인데요 선배
+u|17:25|한동민 말도 꺼내지 마세요...
+h|17:26|ㅋㅋㅋㅋ술 마시지 말고
+h|17:26|남자 때문에 술 마시면 안돼
+u|17:26|알앗어요 ㅋㅋㅋㅋ 고마워요`);
+R('나재민').t='2026. 09. 29.';
+R('박지성').m=P(`d|2026년 9월 9일 수요일 ›
+h|10:54|윤아야ㅑㅑ
+h|10:55|동민이랑 있어?
+h|10:55|동민이 연락이 안돼서
+h|10:55|동아리 애들이 찾는데
+u|10:55|아— 네네
+u|10:55|같이 있어요!
+u|10:56|연락 보라 할게요
+h|10:56|고마웡😚`);
+R('박지성').t='2026. 09. 09.';
+R('이동혁').m=P(`d|2026년 9월 17일 목요일 ›
+u|21:57|선배
+h|21:58|왜애
+u|21:58|낼 교양
+u|21:58|영현사
+u|21:59|수업 안 하는 소문 뭐임
+h|21:59|아 그거
+h|21:59|나도 들었는데
+h|21:59|애들이 장난치는듯
+h|21:59|에타에 올라왔드라
+u|21:59|아 장난이에요?;;에바
+h|21:59|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+h|21:59|그런 것 같은데?
+u|21:59|ㅇㅋ 감사요
+h|22:00|응 ㅋㅋㅋㅋ 수업 안 하길 기도하고 자야지
+u|22:00|ㅋㅋ 안녕주무셈
+h|22:00|ㅋㅋ 너도잘자
+d|2026년 9월 28일 월요일 ›
+u|12:01|점심 ㄱ?
+h|12:01|ㄱㄱ
+u|12:05|예슬이가 같이 먹자는데
+u|12:05|껴도 되죠?
+h|12:07|?뭐지
+h|12:07|이제노가 같이 먹자함
+h|12:07|얘네 장난치나
+u|12:07|ㅋㅋㅋㅋㅋㅋㅋㅋ
+u|12:07|넷이 먹죠 머
+h|12:07|ㄱㄱ`);
+R('이동혁').t='2026. 09. 28.';
+const GC=R('박지성, 이동혁, 나재민');GC.hd='그룹채팅 4';GC.t='2026. 09. 30.';
+GC.m=P(`d|2026년 9월 3일 목요일 ›
+u|16:29|지금 학교인 사람?
+g|16:29|박지성|저요 🙋‍♂️
+g|16:29|박지성|왜?
+u|16:30|애플펜슬 잃어버림 ㅠㅠ
+g|16:33|이동혁|나한테 있어
+g|16:33|이동혁|아까 아침에 교양 들을 때
+g|16:33|이동혁|너가 두고 감 ㅋㅋㅋㅋ
+g|16:33|이동혁|그래서 내가 갖고 있었지 ㅋㅋ
+u|16:34|헐
+u|16:34|다행이다
+g|16:35|나재민|뭐야뭐야 ㅋㅋㅋㅋ
+g|16:35|나재민|다행이넹
+g|16:36|박지성|ㅋㅋㅋㅋㅋ 다행이네
+g|16:36|박지성|다들 집이야?
+u|16:36|ㅠㅠ 진짜 감사요
+u|16:36|네 집임
+g|16:36|박지성|심심한데
+g|16:37|나재민|울 지성이
+g|16:37|나재민|과제 안하나
+g|16:37|박지성|해야 되긴 해
+u|16:37|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+g|16:38|이동혁|ㄹㅇ?
+g|16:39|이동혁|방금 전까지 나랑 롤체 했는데
+g|16:39|이동혁|지성아 바로바로 과제 안 하냐
+g|16:39|박지성|제노형도 과제 안 하고 롤체함
+u|16:39|어휴
+g|16:40|나재민|ㅋㅋㅋㅋㅋㅋㅋ 둘다 안되겠네
+g|16:41|나재민|놀아주려고 했는데 안되겠다
+g|16:41|나재민|과제 얼른 해
+g|16:41|이동혁|ㅋㅋ 수고
+g|16:41|박지성|ㅠㅠ ㅜㅜㅠ 너무해
+g|16:41|박지성|제노형이랑 해야겠다
+u|16:42|이제노선배 박예슬이랑 놀러 갔는데
+g|16:43|박지성|이럴수가….
+g|16:43|이동혁|지성아
+g|16:43|이동혁|포기해 ㅋㅋ
+d|2026년 9월 7일 월요일 ›
+g|11:56|이동혁|밥 먹을 사람
+u|11:56|저 10분뒤에 끝남요
+g|11:57|나재민|나 끝났는데 카메라 챙기러 과방 좀
+g|11:57|나재민|기다려줘용
+g|11:57|이동혁|오케이
+g|11:57|이동혁|윤아 동민이랑 안 먹어?
+u|11:57|넹 오늘 약속 있대서
+g|11:58|나재민|여자친구 두고 약속을 잡다니
+u|11:58|ㅋㅋㅋㅋㅋㅋㅋㅋㅋ ㄱㅊ아요
+d|2026년 9월 12일 토요일 ›
+u|10:17|동혁 선배
+u|10:17|교양 과제 보고서만 제출이죠?
+g|10:19|이동혁|영화와 현대사회?
+u|10:19|넹
+g|10:19|이동혁|ㅇㅇ 아마 그럴걸
+g|10:19|이동혁|오늘 저녁까지 인가
+u|10:21|네 6시까지
+g|10:21|이동혁|오키 땡큐
+u|10:21|저도 땡큐
+g|10:35|나재민|이동혁 영현사를 이제야 듣네
+g|10:41|이동혁|시비 걸지 마세요 아저씨 ㅡㅡ
+d|2026년 9월 15일 화요일 ›
+g|21:26|박지성|롤체 하실 분
+g|21:27|박지성|아 여기가 아니네
+g|21:27|나재민|아조씨 정신 차리세요!!!
+g|21:27|나재민|과제 다하구 하는거지?
+g|21:27|박지성|ㄴㄴ
+g|21:27|박지성|근데 나 과제 있는거
+g|21:27|박지성|맨날 어떻게 아는거지
+g|21:29|이동혁|나재민 무서운 애임
+u|21:29|재민이라고 해야 되는 거 아니에요?
+g|21:29|이동혁|재민이 무서운 애임
+g|21:29|나재민|ㅎㅎ
+d|2026년 9월 27일 일요일 ›
+g|08:17|박지성|학교 정전됐어요
+u|08:17|지성 선배 지금 학교임?
+g|08:17|박지성|ㅠㅠ
+u|08:17|헐......
+u|08:18|과제 안 했나.........
+g|08:18|이동혁|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+g|08:18|박지성|놀리지 마요 ㅠㅠ
+g|08:18|이동혁|예민한 박지성 올만
+g|08:19|박지성|;; 교수님이 일요일 아침 9시까지
+g|08:19|박지성|제출하라고 하심..
+u|08:19|대박
+u|08:19|지성선배 다 햇어요?
+g|08:20|박지성|다 했지 ㅎㅎㅎ
+g|08:20|박지성|이제 집 가서 자야됨
+g|08:20|이동혁|어제부터 학교에서 밤새웠어?
+u|08:20|미쳤네
+g|08:21|박지성|응
+g|08:21|박지성|제노형이랑
+g|08:21|박지성|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+g|08:21|이동혁|어쭈
+d|2026년 9월 28일 월요일 ›
+g|13:24|나재민|윤아
+g|13:24|나재민|동민이랑 잘 지내는 중?
+u|13:32|네 ㅋㅋㅋㅋㅋ
+g|13:32|나재민|예쁘게 사귀네 ㅎㅎ
+g|13:33|나재민|다다음주 대학로에서 연극하는거
+g|13:33|나재민|동민이랑 보러 올래?
+g|13:33|나재민|티켓 두개 줄겡
+u|13:35|10월 16일이죠?
+u|13:35|좋아여
+u|13:35|감사합니당
+g|13:36|나재민|알겠어요ㅋㅋㅋㅋㅋㅋ
+g|13:36|나재민|만나면 줄게!!
+g|14:03|이동혁|내 것도 있냐 재민아
+g|14:10|나재민|있겠냐
+g|14:11|이동혁|자기야 어떻게 내 거가 없을 수 있어?
+u|14:11|자기?........
+g|14:11|나재민|웩
+g|14:11|나재민|넌 차피 바빠서 못 오잖아
+g|14:13|이동혁|맞아
+g|14:13|이동혁|미안해요
+g|14:13|나재민|됐어요 실음과 인기남 이동혁님
+g|14:14|이동혁|미안해요 ㅠㅠ 연영과 인기남 재민님아
+d|2026년 9월 30일 수요일 ›
+u|15:48|한동민이랑 헤어졌어요
+g|15:48|박지성|헐.....
+g|15:48|이동혁|뭘 헐이야 잘 했어
+u|15:49|뭔 일인 줄 알고 잘했대...
+g|15:49|이동혁|몰라 ㅋ
+g|15:49|이동혁|이럴 땐 그냥 잘 했다고 하는 거랬어
+u|15:49|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ ㄱㅅ
+g|15:50|나재민|누가?ㅋㅋㅋㅋㅋㅋ
+g|15:50|이동혁|전여친이
+g|15:50|박지성|아
+u|15:50|아..
+g|15:51|나재민|앗…
+g|15:51|이동혁|숙연해지지 마라`);
+['한동민','나재민','박지성','이동혁','박지성, 이동혁, 나재민'].forEach(n=>{const r=R(n);r.b=0;r.node='a'});
+K.rooms.sort((a,b)=>(b.t.includes(':')-a.t.includes(':'))||(b.t<a.t?-1:b.t>a.t?1:0));
+/* ===== 직접 입력 답장: Claude 없이 키워드별 정해진 답장 ===== */
+const KW={'잘 지내?':['잘 지내','잘지내','안녕','하이'],'보고 싶어':['보고 싶','보고싶'],'보고 싶어요':['보고 싶','보고싶'],'요즘 양정원 선배랑 연락해':['정원'],'잘 자':['잘 자','잘자','굿나잇','졸려'],
+'내일 몇 시에 만나요?':['몇 시','내일','만나','약속','언제'],'선배는 왜 저한테 잘해줘요?':['왜 저','잘해','이유'],'한동민이랑 아는 사이예요?':['동민','아는 사이'],
+'선배 뭐해요?':['뭐해','뭐 해','뭐하','뭐 하','뭐함'],'새벽에 미안해요':['새벽','늦은 시간','미안'],'선배 저 너무 힘들어요':['힘들','울','속상','우울','죽겠'],
+'엄마 뭐해?':['뭐해','뭐 해','뭐하'],'밥 먹었어?':['밥'],'전화할게':['전화'],'엄마 사랑해':['사랑'],'면접 준비 중이야':['면접','준비'],
+'금요일 모임 몇 시예요?':['금요일','모임','몇 시'],'다들 뭐해요?':['다들','뭐해','뭐 해','뭐하'],'오늘 좀 외로워요':['외로','심심','쓸쓸']};
+for(const key in TREE){const r=key==='엄마(문자)'?MS[0]:R(key);if(!r)continue;r.rules=r.rules||[];TREE[key].a.slice().reverse().forEach(op=>{const kw=KW[op[0]];if(kw)r.rules.unshift([kw,{m:op[1]}])})}
+function ruleReply(t){const v=lastMine(t).toLowerCase();let r=t.fb;for(const [k,a] of (t.rules||[]))if(k.some(w=>v.includes(w))){r=a;break}
+ if(r&&r.m)return r.m.map(x=>t.mem?x.split('|'):[undefined,x]);
+ if(Array.isArray(r))r=r[Math.random()*r.length|0];if(!r)return null;return [[t.mem?t.mem[Math.random()*t.mem.length|0]:undefined,r]]}
+/* ===== 단톡방 이어서 + 인사말 답장 ===== */
+GC.m=GC.m.concat(P(`u|15:52|암튼
+u|15:52|이제 한동민 얘기 ㄴㄴ
+u|15:52|이거 말하려고 헤어진 거 알림
+g|15:52|박지성|오케이
+g|15:53|나재민|오케이
+g|15:53|이동혁|ㅇㅋ
+g|15:53|이동혁|밥 먹으실?
+u|15:53|ㄲ
+u|15:53|ㄱㄱ
+g|15:53|박지성|나도 껴줘
+u|15:53|ㄱ
+d|2026년 10월 1일 목요일 ›
+g|17:56|나재민|이제노 본 사람
+g|17:56|박지성|저여
+g|17:56|박지성|지금 내 옆에서 겜중
+u|17:57|제노선배 게임 많이 하신다
+g|17:57|박지성|비밀이라고 예슬이한테 말하지 말라 함
+g|17:57|박지성|ㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+u|17:57|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+u|17:58|아 제 카톡 읽어줬어요? ㅡㅡ
+g|17:58|박지성|ㅎㅎ
+u|17:58|근데 이미 알 걸요
+g|17:58|박지성|제노형이 망했다고 함
+g|17:58|박지성|ㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+u|17:58|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+g|17:58|나재민|아놔
+g|17:59|나재민|제노한테 키 줘야 되는데
+g|17:59|나재민|전화 안 받고 뭐하나 했더니
+g|17:59|나재민|게임 중이었고만
+g|18:00|박지성|제노형한테 전달해줬음요
+g|18:02|박지성|재민아 동혁이 만나면 동혁이한테 줘
+g|18:02|나재민|뭐야
+g|18:02|박지성|이따 저녁에 이동혁 만나기로 함
+g|18:03|박지성|너네 혹시 만나면 이동혁한테 키 패스 좀
+g|18:03|박지성|아님 내일 내가 갈게
+u|18:03|제노선배인가
+g|18:04|나재민|제노임?
+g|18:04|박지성|ㅇㅇ
+g|18:04|박지성|제노형이 내 폰 뺏어서 씀😒
+g|18:04|박지성|ㅇㅇ부터 나임
+g|18:05|나재민|오케잉ㅋㅋ
+g|19:42|이동혁|이제노 뭐야;
+d|2026년 10월 3일 토요일 ›
+u|10:53|혹시 양정원 선배랑 친한 사람 잇음?
+g|10:56|이동혁|내가 아는 양정원?
+u|10:56|아마도요
+g|10:56|이동혁|나 ㅋㅋㅋ 왜?
+u|10:56|많이 친해요?
+g|10:57|이동혁|그럭저럭
+g|10:57|이동혁|글케 친하진 않은데
+g|10:57|이동혁|만나면 인사하지 연락 가끔 하고
+u|10:57|아하
+u|10:57|아니 갑자기 연락 와서요
+g|10:58|이동혁|타이밍 기가 막힌다
+u|10:58|ㅇㅈ
+g|10:59|나재민|윤아 남친 자리 빈 거 어케알고ㅋㅋㅋㅋ
+g|10:59|박지성|그니까 ㅋㅋㅋㅋ 신기
+u|10:59|아 그런거 아니에요 ㅡㅡ
+u|10:59|ㅋㅋㅋㅋㅋㅋㅋ
+u|11:00|그냥 심심해서 연락한 듯
+g|11:00|박지성|😏
+g|11:00|나재민|ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ
+d|2026년 10월 6일 화요일 ›
+u|12:28|비상
+u|12:28|아 비상
+g|12:28|나재민|??
+g|12:28|이동혁|먼일인데
+u|12:28|양정원선배
+u|12:28|나 좋아하나봐
+g|12:29|박지성|헐..
+g|12:29|이동혁|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+g|12:29|이동혁|뭘 했길래
+g|12:29|나재민|뭐야뭐야 ㅎㅎ
+u|12:29|아니
+u|12:30|갑자기 보고싶다고 연락해서
+u|12:30|너무 당황해서
+u|12:30|이상하게 답하고
+g|12:31|이동혁|ㅋㅋㅋㅋㅋ 당황했네
+g|12:31|나재민|ㅋㅋㅋㅋㅋㅋㅋㅋㅋ 어떡햐
+g|12:31|나재민|꺄
+g|12:31|박지성|꺄 ㅋㅋㅋ
+g|12:31|박지성|솔직히 좀 설레는데
+u|12:31|하어떡함 지금
+u|12:31|어떻게 반응해야 할지 잘 모르게ㅛ어요
+g|12:33|나재민|ㅋㅋㅋㅋㅋㅋ
+g|12:33|나재민|예전에 양정원 좋아하지 않았어?
+u|12:33|맞음....
+u|12:33|어떻게 기억해요 그거?
+u|12:33|한동민 만나면서 끝내긴 했는데
+u|12:33|ㅋㅋㅋㅋ....
+g|12:34|이동혁|오히려 잘 됐지
+g|12:34|이동혁|동민이는 안타깝지만
+g|12:34|박지성|머가 안타까워여 ㅋㅋㅋ 으
+u|12:34|ㅋㅋㅋㅋㅋㅋㅋ
+u|12:34|미안하게 됐네
+g|12:34|이동혁|진짜 미안해?
+u|12:34|ㄴㄴ
+g|12:34|이동혁|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+g|12:34|나재민|상관없지 ㅋㅋㅋㅋㅋㅋㅋ
+g|12:35|이동혁|나도 동민이 안타깝다한 거
+g|12:35|이동혁|진짜 안타깝단 말 아니고
+g|12:35|이동혁|동정의 의미로 쓴 건데 ㅋㅋㅋㅋㅋ
+g|12:35|이동혁|박지성 디질래
+g|12:35|박지성|ㅋㅋㅋㅋㅋㅋㅋㅋ 잘해봐ㅏ
+d|2026년 10월 10일 토요일 ›
+u|21:34|선배들
+u|21:34|학교 앞 편의점
+u|21:34|엄청 세일함
+g|21:34|나재민|뭐 세일 하는데?
+g|21:35|박지성|아 거기
+g|21:35|박지성|문 닫는다는 소문 있는데
+g|21:35|박지성|진짠가
+g|21:35|나재민|아 그래?
+u|21:35|어어 맞아요
+u|21:35|금방 닫나봄
+u|21:35|근처인 사람 빨리 뛰어
+g|21:35|박지성|ㅋㅋㅋㅋㅋ 간식 사러 가야겠다
+g|21:35|박지성|고마워😉
+g|21:36|나재민|내가 소식이 느리네
+g|21:36|나재민|왜 아무도 이런 소식을
+g|21:36|나재민|안 들려주지......
+u|21:36|친구 많잖아요
+g|21:36|이동혁|친구 없냐
+g|21:36|나재민|그런듯?
+g|21:37|나재민|윤아가 말했을땐 아무렇지도 않았는데
+g|21:37|나재민|동혁이가 말하니까
+g|21:37|나재민|기분이 이상해지네
+g|21:37|나재민|어디냐?
+g|21:37|이동혁|아 왜여
+g|21:37|박지성|재민이형
+g|21:37|박지성|윤아는 형이 친구 많다고해줬지만
+g|21:37|박지성|동혁이형은 형 친구없냐고해서
+g|21:37|박지성|기분이 다른거겠죠
+g|21:38|박지성|친구 없어도ㅜ 괜찮아요
+g|21:38|나재민|이동혁 박지성 어디야?
+u|21:38|이제 큰일났다
+u|21:38|난 빠이
+g|21:38|이동혁|죄송합니다
+g|21:38|박지성|형 미안
+g|21:38|나재민|어디냐
+d|2026년 10월 15일 목요일 ›
+g|09:00|이동혁|울째민이
+g|09:00|이동혁|내일 연극?
+g|09:05|나재민|넵넵
+g|09:05|이동혁|울 연영과 화제의 남자
+g|09:05|이동혁|내일 연극 파이팅
+g|09:06|나재민|그래그랭
+g|09:06|나재민|고맙다
+g|09:06|이동혁|매번 연극 보러 못가서 미안하다ㅜ
+g|09:06|나재민|괜찮어
+g|09:06|나재민|바쁜 거 누가 몰라
+g|09:06|이동혁|ㅋㅋㅋㅋ 고맙다..
+g|09:07|이동혁|얘들 과외도 해줘야 하고
+g|09:07|이동혁|교수님들도 날 가만두지 않으시네ㅋ
+g|09:07|이동혁|나란 놈의 인기는
+g|09:07|박지성|웩 ㅋㅋ
+g|09:07|박지성|재민이 형 내일 기대할게
+g|09:07|이동혁|형한테 웩?
+g|09:07|이동혁|웩??????
+g|09:07|나재민|스웩ㅋㅋ
+g|09:08|이동혁|?
+g|09:08|나재민|동혁아 알았으니까
+g|09:08|나재민|빨리 가
+g|09:08|나재민|이제노가 복도에서 너 찾는다
+g|09:09|이동혁|아 맞다
+g|09:09|이동혁|땡큐
+u|09:58|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+u|09:58|아 맞다ㅏ
+u|09:58|재민선배 저도 낼 연극 기대할게요
+g|09:58|나재민|ㅋㅋㅋㅋ 그래
+g|09:58|나재민|넘 기대하진 말구....
+g|09:58|나재민|오랜만이라 부끄럽네
+g|09:59|박지성|윤아 재민형 연극 본 적 있어?
+u|09:59|ㄴㄴ 없는듯여
+u|09:59|연습하고 리허설 한 건 예전에 본 것 같은데
+u|09:59|진짜 연극은 첨!!
+g|10:00|나재민|ㅋㅋㅋㅋㅋㅋ 옛날이지ㅣ
+u|10:00|ㅎㅎㅎ
+g|10:00|박지성|아 ㅎㅎ
+g|10:00|박지성|암튼여
+g|10:00|박지성|재민형 파이팅
+u|10:00|파이팅
+g|10:01|나재민|땡큐땡큐🤍
+d|2026년 10월 16일 금요일 ›
+g|23:01|박지성|재민형 찢었다
+g|23:03|이동혁|재민이 연극 잘 했냐
+u|23:04|레전드
+g|23:04|박지성|👏👏👏👏
+g|23:04|박지성|동혁이형
+g|23:04|박지성|이 연극을 못봤다니
+g|23:04|박지성|안타깝다
+u|23:04|연극 중간에 마이클잭슨 음악 나옴ㅋㅋ
+u|23:04|바로 동혁선배 생각났어요
+u|23:05|재민선배 연기 진짜잘함
+u|23:05|인기남일수밖에없었네....
+g|23:05|이동혁|마잭ㅠㅜㅜㅠㅜㅜㅜㅠ
+g|23:05|이동혁|재민아 앵콜해주라
+g|23:05|나재민|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+g|23:05|나재민|다들 고마워용
+g|23:05|나재민|꽃 안 사와도 되는데
+g|23:05|나재민|꽃도 사주구.....
+g|23:05|나재민|다들 귀엽구만ㅋㅋㅋㅋ
+g|23:06|박지성|재민형 고백 30번 더 받는 거 아냐?
+g|23:06|박지성|진심 그정도
+g|23:06|박지성|형 얼굴밖에 안보여
+g|23:11|나재민|ㅋㅋㅋㅋㅋㅋㅋ참마
+g|23:11|나재민|참나...
+g|23:11|나재민|그정도 아니그든여 ㅡㅡ
+u|23:11|그정도 맞음
+u|23:12|반할뻔ㅋㅋㅋ
+g|23:12|나재민|어머
+g|23:12|나재민|오늘 옆에 앉았던 남자분은 어똑하고
+u|23:12|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+g|23:12|나재민|누구랑 오려나 했는데
+g|23:12|나재민|정원이랑 온 거 보고 반가웠어
+g|23:12|나재민|말로만 듣던 정원이~
+u|23:12|ㅋㅋㅋㅋ ;;;흠
+g|23:13|이동혁|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+g|23:13|박지성|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+g|23:13|박지성|나도 놀랐음`));
+GC.t='2026. 10. 16.';
+{const KWG=['안녕','하이','ㅎㅇ','헬로','hi','hello'],G1={'양정원':'윤아 안녕 ㅋㅋㅋㅋ','한동민':'뭔데','나재민':'응응 안녕ㅋㅋㅋㅋㅋ','이동혁':'하이하이','박지성':'안녕🙂‍↕️🙂‍↕️'};
+ for(const n in G1){const r=R(n);if(r){r.rules=r.rules||[];r.rules.unshift([KWG,{m:[G1[n]]}])}}
+ GC.rules=GC.rules||[];GC.rules.unshift([KWG,{m:['박지성|'+G1['박지성'],'이동혁|'+G1['이동혁'],'나재민|'+G1['나재민']]}])}
+K.rooms.sort((a,b)=>(b.t.includes(':')-a.t.includes(':'))||(b.t<a.t?-1:b.t>a.t?1:0));
+/* ===== 단톡방 마무리 + 양정원 1:1 대화 ===== */
+GC.m=GC.m.concat(P(`u|23:13|하하
+g|23:13|나재민|ㅋㅋㅋㅋ 나 이제
+g|23:13|나재민|얘들이 불러서
+g|23:13|나재민|바바이
+g|23:13|이동혁|뒷풀이 하냐?
+g|23:13|이동혁|즐기고 와라
+u|23:13|ㅋㅋㅋㅋㅋㅋ 빠이
+g|23:14|박지성|수고많았어여 형`));
+{const r=R('양정원');r.m=P(`d|2026년 10월 3일 토요일 ›
+h|10:32|윤아 안녕
+u|10:44|헐 안녕하세요 선배
+u|10:44|오랜만이네요
+h|10:50|응 오랜만이네
+h|10:50|편하게 불러도 돼
+u|10:50|아니에요 괜찮아요 ㅋㅋㅋ
+u|10:51|선배라고 부르는 게 편해서 ㅎㅎ
+h|10:51|그렇구나
+h|10:51|너 편하면 됐지 뭐
+h|10:51|ㅋㅋㅋㅋ
+u|10:53|근데 무슨 일로 연락하셨어요?
+h|10:53|그냥
+h|10:53|연락하고 싶어서
+h|10:53|안 불편하면 계속 연락해도 돼?
+u|10:55|네네 괜찮아요
+h|10:55|ㅋㅋㅋ 그래
+h|18:09|뭐 하고 있나
+u|18:13|저 지금 친구들이랑 약속 나왔어요
+u|18:13|선배는요?
+h|18:14|나는 그냥 과제 하는 중
+u|18:15|화이팅....
+h|18:15|ㅋㅋㅋ 고마워
+h|18:15|늦게 들어가지 말고
+u|18:16|넹 ㅋㅋㅋㅋㅋ
+d|2026년 10월 6일 화요일 ›
+h|12:25|보고싶어
+u|12:27|네?
+u|12:27|아
+h|12:27|ㅋㅋㅋㅋ 당황스럽게 해서 미안
+h|12:27|당황해서 그렇지?
+u|12:27|아..
+u|12:28|네 죄송해요 ㅠㅠ
+u|12:28|ㅋㅋㅋㅋㅋㅋㅋ 저도 보고싶어여
+h|12:28|ㅋㅋㅋㅋ 응
+h|12:28|귀엽다
+h|12:28|사실은 너한테 관심 있어서
+h|12:29|연락하자고 한 거야
+u|12:29|아하 ㅎㅎㅎ
+u|12:29|좋아요
+h|12:30|표현하고 싶은데
+h|12:30|어떻게 해야 할지 모르겠더라
+h|12:30|다짜고짜 연락해서 내 마음 표현하면
+h|12:31|글쎄.. ㅋㅋㅋ 너가 싫어할 것 같아서
+u|12:31|ㅋㅋㅋㅋㅋㅋㅋㅋ
+u|12:31|괜찮아요
+h|12:33|다행이네
+u|12:34|ㅋㅋㅋㅋ 아... 표현을 이상하게 했는데
+u|12:34|진짜 괜찮고 저도 좋아요!! ㅎㅎ
+h|12:35|응 알았어
+h|12:35|이렇게 얘기하니까 편하다
+u|12:35|ㅎㅎ 넵 학교에서 봐요 선배
+h|12:35|그래 ㅎㅎㅎㅎ
+d|2026년 10월 7일 수요일 ›
+h|06:50|잘잤어?
+u|08:50|네 지금요 ㅋㅋㅋ
+u|08:50|선배 진짜 빨리 일어나시네요
+h|08:51|ㅋㅋㅋㅋ 응
+h|08:52|오늘 뭐하시나?
+u|08:52|학교 가야져
+u|08:52|선배 몇 시부터 강의예요?
+h|08:53|나는 오후에
+u|08:53|여유롭겠다...
+h|08:53|그르네
+u|08:54|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ 말투 뭐예요
+h|08:54|ㅋㅋㅋㅋ 보고 싶네
+h|08:55|이따 잠깐 볼래?
+u|08:55|좋아요
+u|08:55|이따 점심 이후에 연락할게요
+h|08:55|그래 ㅐ
+d|2026년 10월 10일 토요일 ›
+h|22:04|밖이야?
+h|22:06|시간 늦었는데 얼른 들어가
+d|2026년 10월 11일 일요일 ›
+u|01:11|헐 네
+u|01:11|어떻게 알았어요?
+h|01:11|본 것 같아서 ㅋㅋㅋㅋ
+h|01:12|밤인데 친구랑 둘이 돌아다니길래
+h|01:12|늦었는데 위험하잖아
+h|01:12|그래서 연락했었지
+u|01:12|아 ㅋㅋㅋㅋ
+u|01:12|근데 선배 왜 안 자요
+u|01:13|얼른 자요!!
+h|01:13|별로 안 졸려서...
+h|01:13|잠들기 쉽지 않아
+h|01:13|너는 이제 자야지
+u|01:14|넵 ㅎㅎ 자려고요
+u|01:14|그럼 먼저 잘게요 ㅎㅎ
+h|01:14|응
+h|01:14|잘자
+d|2026년 10월 15일 목요일 ›
+u|11:03|선배 내일 뭐해요?
+h|11:09|내일 뭐 없어
+h|11:09|만날까?
+u|11:09|좋아요
+u|11:10|선배 나재민선배 알아요?
+h|11:10|알아
+h|11:10|연영과?
+u|11:10|네네 맞음
+u|11:10|재민선배가 연극 티켓 줬는데
+u|11:10|저랑 보러 가실래여?
+u|11:10|내일 저녁 8시
+h|11:10|좋아
+h|11:11|같이 가자
+u|11:11|ㅎㅎ 넵
+h|11:12|6시쯤 집 앞으로 데리러 갈까?
+h|11:12|밥 먹고 보러 가는 게 좋을 것 같아서
+u|11:12|헐 네
+u|11:12|좋아요 ㅎㅎㅎ
+h|11:12|내일 따듯하게 입어
+h|11:13|패딩 입어도 될 듯
+u|11:13|ㅋㅋㅋㅋㅋㅋ 그 정도예요?
+h|11:13|ㅋㅋㅋ 내일 추워 ㅓ
+u|11:13|알앗어요 ㅎㅎ
+d|2026년 10월 16일 금요일 ›
+h|22:19|집에 잘 들어갔어?
+h|22:20|더 있고 싶었는데 아쉽다
+u|22:20|ㅋㅋㅋㅋㅋ 내일도 있잖아요
+u|22:20|덕분에 재밌엇어요
+u|22:20|잘 들어왔어요
+h|22:20|알앗어
+h|22:21|나도 재미있었어ㅎㅎ 잘자
+d|2026년 10월 20일 화요일 ›
+h|15:25|윤아야야
+u|15:29|넹
+h|15:29|그냥 불러봤어
+u|15:30|머예욤ㅋㅋ
+h|15:30|ㅎㅎㅎㅎㅎㅎㅎㅎㅎ
+h|15:30|전화 하구 싶은데
+h|15:30|시간 돼?
+u|15:30|네
+u|15:30|ㄱㄱ
+d|2026년 10월 23일 금요일 ›
+u|23:25|선배
+u|23:25|요즘 학교에서 잘 안보이네여
+d|2026년 10월 24일 토요일 ›
+h|00:18|응 ㅠㅠ
+h|00:18|그러게
+h|00:18|나도 윤아를 못 봤네
+h|00:19|ㅎㅎ 윤아가 나 찾아주는 것 같아서 좋다
+u|00:19|선배 ㅋㅋㅋㅋ
+u|00:19|인기 많죠?
+h|00:19|갑자기ㅣ?
+h|00:19|ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+h|00:19|아냥...
+h|00:19|모르겠어
+u|00:19|ㅋㅋㅋㅋ아
+u|00:19|빨리 자요
+h|00:20|부끄러워하는 것 같네
+h|00:20|ㅎㅎㅎ
+u|00:20|아니에요 아님
+h|00:20|목요일에 만날까?
+u|00:20|목요일
+u|00:20|네 괜찮을 것 같아요
+h|00:20|그래
+h|00:21|보고싶어지네
+u|00:21|ㅎㅎ 잘자요
+h|00:21|응 잘자 ㅋㅋㅋ
+d|2026년 10월 28일 수요일 ›
+h|10:17|아직두 수요일
+h|10:17|빨리 보고싶어
+h|10:18|왜 이렇게 보고 싶어지는 걸까
+u|10:18|그러게요
+u|10:18|날 너무 좋아하는 거 아닌가
+h|10:30|너도 나 좋아하잖아
+u|10:35|ㅋㅋㅋㅋ아ㅋㅋ
+u|10:35|아침부터...
+h|14:40|ㅋㅋㅋㅋㅋ 좀 그런가?`);r.t='14:40';r.b=0;r.node='a'}
+K.rooms.sort((a,b)=>(b.t.includes(':')-a.t.includes(':'))||(b.t<a.t?-1:b.t>a.t?1:0));
+/* 시계·크기 */
+function clk(){const d=new Date(),h=d.getHours(),m=String(d.getMinutes()).padStart(2,"0");$("clock").textContent=(cur==="lockscr"||cur==="pass")?"KT":h+":"+m;$("lkT").textContent=h+":"+m;$("lkD").textContent=(d.getMonth()+1)+"월 "+d.getDate()+"일 ("+"일월화수목금토"[d.getDay()]+")"}clk();setInterval(clk,15000);
+function fit(){const s=Math.min(1,(innerHeight-44)/876,(innerWidth-8)/415);$("device").style.transform="scale("+s+")";$("wrap").style.height=876*s+"px";$("wrap").style.width=415*s+"px"}
+fit();addEventListener("resize",fit);
+</script>
+</body>
+</html>
